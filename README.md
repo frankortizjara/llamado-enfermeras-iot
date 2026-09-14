@@ -8,7 +8,9 @@ hora de atención**.
 Eso último es lo que lo separa de un timbre: el tiempo de respuesta se puede medir.
 
 Desplegado como piloto en un hospital de EsSalud (Perú), en un servicio de
-hospitalización de cirugía.
+hospitalización de cirugía. El proyecto nació de una necesidad documentada: varios
+servicios de la red llevaban años pidiendo timbres sin que llegaran —
+[por qué hacía falta](docs/por-que-hacia-falta.md).
 
 ![Placa controladora diseñada a medida con ESP32, receptor RF de 433 MHz, DIP switches de direccionamiento, buzzer y antena helicoidal](imagenes/01-placa-controlador-esp32.jpg)
 
@@ -88,7 +90,8 @@ firmware/
 │                    publica por MQTT y sirve su propia interfaz de configuración
 └── luces-pasillo/   ESP32 del indicador de pasillo
 docs/
-└── arquitectura.md  las cuatro capas, y lo que conviene saber antes de tocarlo
+├── arquitectura.md        las cuatro capas, y lo que conviene saber antes de tocarlo
+└── por-que-hacia-falta.md la evidencia institucional que sustento el piloto
 ```
 
 Cada ESP32 sirve **una interfaz web embebida desde LittleFS** para configurarlo en
@@ -120,6 +123,35 @@ un cable no es opción.
 
 ---
 
+## Resultados medidos
+
+Piloto en 9 habitaciones de un servicio de hospitalización de cirugía, del 20/02 al
+24/07/2026. Las cifras salen de una exportación completa de la base de datos, no de
+estimaciones.
+
+| | |
+|---|---|
+| Llamados registrados | **256** |
+| Mediana de respuesta | **9.7 s** · 74 % en menos de 1 minuto |
+| Pacientes cubiertos | **441** · 2,239 paciente-días con timbre disponible |
+| Llamados desde el baño | **102 (40 %)**, mediana **7.5 s** |
+| Coste de materiales | **≈ S/ 163 por habitación** |
+| Dispositivos instalados | **32 ESP32** · 67 reemplazos gestionados desde el sistema |
+
+**El 40 % de los llamados salió del baño.** Es el dato que más cambia una decisión:
+el baño es donde ocurren las caídas y es justo donde el timbre de cabecera no llega.
+
+**De día se responde entre 20 y 40 veces más rápido que de noche.** Eso no es una
+función que alguien pidiera; es información de gestión que aparece sola cuando cada
+llamada queda registrada.
+
+Con una salvedad que conviene leer: la cifra global está muy influida por febrero y
+marzo, los meses de instalación y acompañamiento. El mes más representativo de
+operación normal es abril — 47 llamados, mediana de 22.7 s, 64 % en menos de un
+minuto. Es la cifra que yo defendería.
+
+---
+
 ## Limitaciones conocidas
 
 Prefiero decirlas a que se descubran:
@@ -130,11 +162,17 @@ Prefiero decirlas a que se descubran:
 - **La ventana de 30 minutos de sincronización es real.** Un paciente que ingresó
   hace diez minutos todavía no aparece con su nombre. Para un sistema de llamado es
   aceptable, pero es una limitación, no un detalle.
-- **El tiempo de respuesta no se está midiendo bien.** El panel lo calcula, pero
-  las alertas no se cierran desde el sistema —el personal atiende y sigue— así que
-  el cronómetro corre hasta que algo la limpia y los promedios salen en horas en vez
-  de minutos. La métrica que justifica el proyecto es justo la que falta cerrar: hace
-  falta una forma de marcar la atención que no estorbe a quien está trabajando.
+- **El promedio que muestra el panel no sirve.** La medición por llamado es buena,
+  pero el agregado incluye alertas que nadie canceló —seis quedaron abiertas entre 7
+  y 21 días— y eso arrastra la media a valores de horas. La mediana es la métrica
+  correcta aquí, y el panel muestra la media.
+- **La respuesta se degradó al retirarse el acompañamiento.** Mediana de 7.4 s
+  durante la instalación, 60 s en operación. Puede ser que el personal atienda y no
+  cancele, un cambio de configuración en mayo, o que la respuesta empeorara de
+  verdad. No está confirmado cuál, y hasta confirmarlo no se afirma ninguna.
+- **Sin llamados desde el 24/07/2026.** Los dispositivos siguen vivos, así que no es
+  falla de hardware: apunta a desuso o a un cambio de servidor. Es el argumento
+  central para administrarlo de forma centralizada.
 - **La red hospitalaria está aislada**, así que el despliegue lleva las imágenes de
   Docker en archivo en lugar de descargarlas. Funciona, pero hace cada actualización
   un procedimiento manual.
