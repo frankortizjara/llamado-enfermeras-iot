@@ -59,6 +59,22 @@ pasillo ya se encendió igual.
 
 ---
 
+## El sistema en uso
+
+![Panel del sistema mostrando la retícula de habitaciones y camas del servicio con el paciente asignado a cada una](imagenes/04-panel-mapa-de-camas.jpg)
+
+*El mapa de camas: lo que ve el personal en la estación de enfermería. Los datos de la captura son de prueba.*
+
+![Panel de monitorización de los 27 ESP32 instalados, con su estado en línea o fuera de línea por habitación](imagenes/05-panel-dispositivos.jpg)
+
+*Los 27 dispositivos y su estado. Cada uno reporta solo; los que aparecen fuera de línea se detectan sin que nadie llame para avisar.*
+
+![Gráficos de movimientos de ocupación por día y frecuencia de alertas por hora del día](imagenes/06-analytics-frecuencia-de-alertas.jpg)
+
+*Frecuencia de alertas por hora del día. Es lo que un timbre no puede dar: saber cuándo se concentra la demanda.*
+
+---
+
 ## Qué hay en este repositorio
 
 Este es un repositorio de portafolio: contiene el **firmware ESP-NOW**, que es la
@@ -114,6 +130,11 @@ Prefiero decirlas a que se descubran:
 - **La ventana de 30 minutos de sincronización es real.** Un paciente que ingresó
   hace diez minutos todavía no aparece con su nombre. Para un sistema de llamado es
   aceptable, pero es una limitación, no un detalle.
+- **El tiempo de respuesta no se está midiendo bien.** El panel lo calcula, pero
+  las alertas no se cierran desde el sistema —el personal atiende y sigue— así que
+  el cronómetro corre hasta que algo la limpia y los promedios salen en horas en vez
+  de minutos. La métrica que justifica el proyecto es justo la que falta cerrar: hace
+  falta una forma de marcar la atención que no estorbe a quien está trabajando.
 - **La red hospitalaria está aislada**, así que el despliegue lleva las imágenes de
   Docker en archivo en lugar de descargarlas. Funciona, pero hace cada actualización
   un procedimiento manual.
