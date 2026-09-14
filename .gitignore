@@ -1,23 +1,22 @@
-# Este repositorio es publico. Nada de lo siguiente entra, nunca.
-
-# Variables de entorno y credenciales
+# Este repositorio es publico.
 .env
 .env.*
 !.env.example
 *.pem
 *.key
 
-# Datos: este repo no contiene datos de pacientes ni volcados de base
+# Datos: nunca. Ni volcados, ni censo, ni seeds con pacientes.
 *.csv
-*.sql
+*.xlsx
 *.dump
-
-# Material sin revisar
 fotos/
-originales/
-*.HEIC
 
-# Basura del sistema
-.DS_Store
-Thumbs.db
+# Artefactos de compilacion del firmware
+*.bin
+*.elf
+*.map
+
 node_modules/
+dist/
+.angular/
+.DS_Store

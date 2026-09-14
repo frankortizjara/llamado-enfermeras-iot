@@ -1,0 +1,1401 @@
+/* Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Bootstrap Icons */
+@import 'bootstrap-icons/font/bootstrap-icons.min.css';
+
+/* Variables SCSS */
+$primary: #1957FF;
+$primary-dark: #3F65E0;
+$primary-light: #E6F0FF;
+$danger: #ff0000;
+$bg-light: #F9FCFF;
+$bg-card: #FBFCFF;
+
+/* Breakpoints */
+$tablet: 768px;
+$desktop: 1024px;
+$wide: 1360px;
+
+/* You can add global styles to this file, and also import other style files */
+@font-face {
+    font-family: 'Roboto-Black';
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+    src: url('./assets/fonts/Roboto-Black.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+    src: url('./assets/fonts/Roboto.woff2') format('truetype');
+}
+
+html,
+body {
+    font-family: 'Roboto-Black';
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Roboto-Black', "Helvetica Neue", sans-serif;
+}
+
+body.mat-typography {
+    font-family: Calibri, 'Roboto-Black', "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: left;
+    background: #FBFCFF;
+    height: 100%;
+}
+
+
+.login-bg {
+    background-image: url('./assets/images/background.png');
+    background-size: cover;
+    display: flex;
+    //flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-evenly;
+    //align-content: center;
+    //height: calc(100vh - 25px);
+    height: min(calc(100vh - 25px));
+}
+
+.title-lg {
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 30.52px;
+    text-align: center;
+    color: #0064AF;
+    padding: 0px 0px 20px;
+}
+
+.container-logo {
+    width: 620px;
+    height: 353px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+img.pseudologo_e {
+    height: 40px;
+}
+
+img.pseudologo_a {
+    //height: 156px;
+    padding: 50px 0px 35px;
+}
+
+.container-login {
+    border-radius: 20px;
+    background: #FFF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    padding: 60px 40px;
+    width: 400px;
+    height: 456px;
+}
+
+.btn-login {
+    padding: 20px 0px 0px;
+}
+
+.footer {
+    background-color: #1A3EC1;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.p-footer {
+    height: 15px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14.65px;
+    text-align: center;
+    color: #FBFDFF;
+    margin: 0px !important;
+}
+
+.navbar {
+    background: #3F65E0;
+    color: #FFFFFF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    height: 56px;
+    padding: 8px 30px;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.text-lg {
+    width: 620px;
+    height: 72px;
+    font-family: Calibri;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 24.41px;
+    text-align: justify;
+    color: #FFFFFF;
+}
+
+.principal {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    padding: 10px 30px;
+    box-sizing: border-box;
+    background: #FBFCFF;
+    overflow: hidden;
+}
+
+.body-h {
+    width: 100%;
+    max-width: 1400px;
+    height: 100%;
+    padding: 10px 0;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.titulo-h {
+    font-family: 'Roboto-Black';
+    display: flex;
+    width: 100%;
+    flex-shrink: 0;
+    cursor: default;
+    font-size: 28px;
+    font-weight: 900;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 1.2;
+    text-align: left;
+    color: #1957FF;
+}
+
+.titulo-h .btn-edit,
+.titulo-h .btn-edit i {
+    color: inherit;
+    color: inherit;
+    /* Bootstrap usa esta variable */
+}
+
+.contenedor-h {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-auto-rows: auto;
+    gap: 12px;
+    justify-items: center;
+    align-content: center;
+    position: relative;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.habitacion-al.alerta-max {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 0, 0, 0.85);
+    z-index: 9999;
+    font-size: 150px;
+    display: flex;
+    color: white;
+    line-height: 150px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+h2 {
+    margin: 0;
+}
+
+.emergencia {
+    display: block;
+    text-align: center;
+}
+
+.nombre-habitacion {
+    display: block;
+    text-align: center;
+}
+
+
+.habitacion {
+    font-family: 'Roboto-Black';
+    border-radius: 15px;
+    border: 3px solid #5B87FF;
+    background: #F9FCFF;
+    width: 100%;
+    max-width: 340px;
+    min-width: 260px;
+    height: 160px;
+    cursor: pointer;
+    gap: 2px;
+    display: flex;
+    position: relative;
+    z-index: 1;
+    padding: 2.5px;
+    box-sizing: border-box;
+}
+
+.habitacion-al {
+    font-family: 'Roboto-Black';
+    border-radius: 15px;
+    border: 3px solid #ff0000;
+    background: #F9FCFF;
+    width: 100%;
+    max-width: 340px;
+    min-width: 260px;
+    height: 160px;
+    padding: 2.5px;
+    gap: 2px;
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    transform: translateY(-3px) translateX(-3px);
+    animation: blink-animation 1600ms steps(1, start) infinite;
+    box-sizing: border-box;
+}
+
+.numero-h {
+    border-radius: 10px 0px 0px 10px;
+    background: #E6F0FF;
+    width: 47px;
+    min-width: 47px;
+    height: 100%;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.numero-al-max-h {
+    border-radius: 10px 10px 10px 10px;
+    background: #E6F0FF;
+    width: 250px;
+    height: 155px;
+    padding: 5px;
+    gap: 22.5px;
+    font-size: 25px;
+    display: flex;
+    align-items: center;
+    color: #0064AF;
+    justify-content: center;
+    text-align: center;
+    flex-direction: row;
+}
+
+.btn-edit {
+    background-color: #1957FF;
+    color: white;
+    margin: 0;
+    font-size: 13px;
+    font-weight: normal;
+    white-space: nowrap;
+    width: 130px;
+    height: 34px;
+    display: flex;
+    flex-direction: row;
+    border-radius: 10px;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    text-align: right;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.btn-text {
+    font-size: 14px;
+    padding-top: 10px;
+    /* Ajuste fino para alinear perfectamente */
+    line-height: 1;
+    display: inline-block;
+    color: white;
+    text-align: center;
+    align-items: center;
+}
+
+.btn-edit i {
+    font-size: 16px;
+    position: relative;
+    align-items: center;
+}
+
+.numero-h .bi {
+    color: #FFFFFF;
+}
+
+.numero-h p {
+    margin: 0px;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 36px;
+    width: 42px;
+    height: 36px;
+    text-align: center;
+    color: #1957FF;
+}
+
+
+.numeroal-h {
+    border-radius: 10px 0px 0px 10px;
+    background: #EF3038;
+    width: 47px;
+    //height: 155px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contender-c {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    z-index: 0;
+    position: relative;
+    border-radius: 0px 10px 10px 0px;
+    display: grid;
+    gap: 2px;
+}
+
+.contenderal-c {
+    flex: 1;
+    min-width: 0;
+    min-height: 30px;
+    height: 100%;
+    position: relative;
+    z-index: 0;
+    border-radius: 0px 10px 10px 0px;
+    display: grid;
+    gap: 3px;
+}
+
+.contender-c>.cama:first-child {
+    border-top-right-radius: 10px;
+    position: relative;
+}
+
+.contender-c>.cama:last-child {
+    border-bottom-right-radius: 10px;
+    position: relative;
+}
+
+.contenderal-c>.cama-al:first-child {
+    border-top-right-radius: 10px;
+    position: relative;
+}
+
+.contenderal-c>.cama-al:last-child {
+    border-bottom-right-radius: 10px;
+    position: relative;
+}
+
+.contenderal-c>.cama-al-ba:first-child {
+    border-top-right-radius: 10px;
+    position: relative;
+}
+
+.contenderal-c>.cama-al-ba:last-child {
+    border-bottom-right-radius: 10px;
+    position: relative;
+}
+
+.contenedor-n {
+    width: 31px;
+    position: relative;
+}
+
+.cama {
+    background: #E6F0FF;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0px 6px;
+    gap: 6px;
+    min-height: 0;
+}
+
+.icon-c {
+    margin-left: auto;
+    /* Empuja el icono hacia el borde derecho */
+    width: 32px;
+    /* Ajusta el tamaño del icono si es necesario */
+    height: 32px;
+    /* Ajusta el tamaño del icono si es necesario */
+}
+
+.cama-al {
+    background: #EF3038;
+    width: 100%;
+    min-height: 31px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 4px 6px;
+    gap: 6px;
+}
+
+.cama-al-ba {
+    background: #FF7B28;
+    ;
+    width: 100%;
+    //padding: 0px 6px;
+    display: flex;
+    align-items: center;
+    //justify-content: space-between;
+    position: relative;
+    padding: 4px 6px 4px 6px;
+    gap: 6px;
+}
+
+p.letra-c {
+    width: 17px;
+    height: 36px;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 36px;
+    text-align: center;
+    color: #1957FF;
+    position: relative;
+    margin: 0px;
+}
+
+.line-v {
+    width: 1px;
+    height: 90%;
+    background-color: #B7CBFF;
+    position: relative;
+}
+
+/* Contenedor vertical para nombre + nota */
+.paciente-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+}
+
+p.nombre-p {
+    color: #1916AC;
+    min-width: 0;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 21px;
+    text-align: left;
+    margin: 0px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Badge de nota con color, icono, hora y fecha */
+.nota-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    width: fit-content;
+    max-width: 100%;
+
+    i, .nota-text, .nota-time, .nota-date {
+        color: #FFFFFF;
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 14px;
+        white-space: nowrap;
+    }
+
+    i {
+        font-size: 9px;
+        flex-shrink: 0;
+    }
+
+    .nota-time {
+        font-weight: 500;
+        opacity: 0.9;
+    }
+
+    .nota-date {
+        font-weight: 500;
+        opacity: 0.85;
+        font-size: 9px;
+    }
+}
+
+img.icon-c {
+    width: 27px;
+    height: 27px;
+}
+
+.numeroal-h p {
+    margin: 0px;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 36px;
+    text-align: center;
+    position: relative;
+    color: #ffffff;
+}
+
+p.letraal-c {
+    width: 17px;
+    height: 36px;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 36px;
+    text-align: center;
+    position: relative;
+    color: #ffffff;
+    margin: 0px;
+}
+
+.lineal-v {
+    width: 1px;
+    height: 90%;
+    position: relative;
+    background-color: #ffffff;
+}
+
+p.nombreal-p {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 21px;
+    text-align: left;
+    color: #ffffff;
+    margin: 0px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+@keyframes blink-animation {
+    50% {
+        visibility: hidden;
+    }
+}
+
+.input-password {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 37.6px;
+    //padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--bs-body-color);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: var(--bs-body-bg);
+    background-clip: padding-box;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    justify-content: space-between;
+    align-items: center;
+
+    transition: box-shadow 0.2s ease;
+}
+
+.clave {
+    width: 100%;
+    height: 100%;
+    padding: .375rem .75rem;
+    border-radius: var(--bs-border-radius);
+    border: 0px;
+}
+
+.icon-eye {
+    cursor: pointer;
+    padding: .375rem .25rem;
+    position: absolute;
+    right: 0.5rem;
+    cursor: pointer;
+    background-color: #ffffff00;
+}
+
+input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.input-password.focused {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    /* Halo azul claro */
+    border-color: #86b7fe;
+    /* Opcional: Cambia el color del borde si es necesario */
+}
+
+.input-password.autofill {
+    background-color: lightcoral;
+    /* Cambia el color del fondo del div */
+}
+
+/* ============================================
+   RESPONSIVE STYLES - Full Responsive Design
+   ============================================ */
+
+/* Mobile Small (< 480px) */
+@media only screen and (max-width: 479px) {
+    .login-bg {
+        height: auto;
+        min-height: calc(100vh - 25px);
+        padding: 15px;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .container-logo {
+        width: 100%;
+        height: auto;
+        align-items: center;
+    }
+
+    .container-login {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        padding: 30px 20px;
+    }
+
+    img.pseudologo_a {
+        padding: 15px 0px;
+        max-width: 80%;
+    }
+
+    .text-lg {
+        width: 100%;
+        font-size: 14px;
+        text-align: center;
+        height: auto;
+    }
+
+    .navbar {
+        padding: 10px 15px;
+        height: auto;
+        min-height: 55px;
+    }
+
+    .principal {
+        padding: 10px;
+    }
+
+    .titulo-h {
+        font-size: 20px;
+        flex-direction: column;
+        height: auto;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .btn-edit {
+        width: 100%;
+        max-width: 140px;
+    }
+
+    .contenedor-h {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 10px 5px;
+    }
+
+    .habitacion,
+    .habitacion-al {
+        width: 100%;
+        max-width: 100%;
+        min-width: auto;
+        height: auto;
+        min-height: 140px;
+    }
+
+    .numero-h,
+    .numeroal-h {
+        width: 40px;
+        height: auto;
+        min-height: 130px;
+    }
+
+    .contender-c,
+    .contenderal-c {
+        height: auto;
+        min-height: 130px;
+    }
+
+    p.nombre-p,
+    p.nombreal-p {
+        font-size: 14px;
+    }
+
+    p.letra-c,
+    p.letraal-c {
+        font-size: 20px;
+    }
+
+    .habitacion-al.alerta-max {
+        font-size: 60px;
+        line-height: 70px;
+    }
+
+    .habitacion-al.alerta-max .emergencia {
+        font-size: 40px;
+    }
+
+    .habitacion-al.alerta-max .nombre-habitacion {
+        font-size: 80px;
+    }
+}
+
+/* Mobile Large / Tablet Small (480px - 767px) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+    .login-bg {
+        height: auto;
+        min-height: calc(100vh - 25px);
+        padding: 20px;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .container-logo {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        align-items: center;
+    }
+
+    .container-login {
+        width: 100%;
+        max-width: 380px;
+        height: auto;
+        padding: 35px 25px;
+    }
+
+    .text-lg {
+        width: 100%;
+        max-width: 400px;
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .navbar {
+        padding: 10px 20px;
+        height: auto;
+        min-height: 58px;
+    }
+
+    .principal {
+        padding: 15px;
+    }
+
+    .titulo-h {
+        font-size: 24px;
+    }
+
+    .contenedor-h {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+
+    .habitacion,
+    .habitacion-al {
+        max-width: 320px;
+    }
+
+    .habitacion-al.alerta-max {
+        font-size: 80px;
+        line-height: 90px;
+    }
+
+    .habitacion-al.alerta-max .emergencia {
+        font-size: 50px;
+    }
+
+    .habitacion-al.alerta-max .nombre-habitacion {
+        font-size: 100px;
+    }
+}
+
+/* Tablet Portrait (768px - 1023px) */
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+    body.mat-typography {
+        height: 100%;
+    }
+
+    .login-bg {
+        height: calc(100vh - 25px);
+        padding: 20px;
+        gap: 30px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .navbar {
+        padding: 12px 25px;
+        height: auto;
+        min-height: 60px;
+    }
+
+    .container-logo {
+        width: 100%;
+        max-width: 450px;
+        height: auto;
+        align-items: center;
+    }
+
+    .container-login {
+        width: 100%;
+        max-width: 380px;
+        height: auto;
+        padding: 40px 30px;
+    }
+
+    img.pseudologo_a {
+        padding: 20px 0px 15px;
+        max-width: 100%;
+    }
+
+    .text-lg {
+        width: 100%;
+        max-width: 450px;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .principal {
+        padding: 8px 15px;
+    }
+
+    .contenedor-h {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .habitacion-al.alerta-max {
+        font-size: 100px;
+        line-height: 110px;
+    }
+
+    .habitacion-al.alerta-max .emergencia {
+        font-size: 60px;
+    }
+}
+
+/* Tablet Landscape / Small Desktop (1024px - 1359px) */
+@media only screen and (min-width: 1024px) and (max-width: 1359px) {
+    .login-bg {
+        padding: 20px 40px;
+        gap: 40px;
+    }
+
+    .container-logo {
+        width: 500px;
+    }
+
+    .text-lg {
+        width: 500px;
+    }
+
+    .principal {
+        padding: 10px 20px;
+    }
+
+    .titulo-h {
+        font-size: 26px;
+    }
+
+    .contenedor-h {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .habitacion-al.alerta-max {
+        font-size: 120px;
+        line-height: 130px;
+    }
+}
+
+/* Wide Desktop (1360px - 1919px) */
+@media only screen and (min-width: 1360px) and (max-width: 1919px) {
+    .principal {
+        padding: 10px 30px;
+    }
+
+    .contenedor-h {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+    }
+}
+
+/* Ultra Wide Desktop (1920px+) */
+@media only screen and (min-width: 1920px) {
+    .principal {
+        padding: 15px 50px;
+    }
+
+    .body-h {
+        max-width: 1800px;
+    }
+
+    .contenedor-h {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+    }
+
+    .titulo-h {
+        font-size: 30px;
+    }
+}
+
+/* ============================================
+   ALERT STYLES - Highlighting beds and rooms
+   ============================================ */
+
+/* Habitación con alerta simple (borde rojo) */
+.habitacion-alerta {
+    border-color: #EF3038 !important;
+    animation: pulse-border 1.5s ease-in-out infinite;
+}
+
+/* Número de habitación en alerta */
+.numero-alerta {
+    background: #EF3038 !important;
+}
+
+.numero-alerta p {
+    color: #FFFFFF !important;
+}
+
+/* Cama en alerta (fondo rojo) */
+.cama-alerta {
+    background: #EF3038 !important;
+}
+
+/* Cama de baño en alerta (fondo naranja) */
+.cama-bano {
+    background: #FF7B28 !important;
+}
+
+/* ============ FASE 1: Cambio manual de cama ============ */
+
+/* Cama con cambio manual pendiente de confirmacion por EsSi */
+.cama-manual-pendiente {
+    position: relative;
+    border: 2px dashed #f97316 !important;
+    box-shadow: 0 0 6px rgba(249, 115, 22, 0.4);
+}
+
+/* Badge "Manual" en la esquina */
+.badge-manual {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #f97316;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Boton mover cama (esquina inferior derecha de la cama) */
+.btn-mover-cama,
+.btn-cancelar-manual,
+.btn-ingresar-paciente {
+    position: absolute;
+    bottom: 4px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #d1d5db;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #4b5563;
+    font-size: 12px;
+    transition: background 0.15s, transform 0.1s;
+    z-index: 4;
+    padding: 0;
+    line-height: 1;
+}
+.btn-mover-cama { right: 4px; }
+.btn-cancelar-manual { right: 32px; background: #fff7ed; color: #c2410c; }
+.btn-ingresar-paciente { right: 4px; background: #ecfdf5; color: #047857; border-color: #6ee7b7; }
+.btn-mover-cama:hover { background: #fed7aa; color: #9a3412; transform: scale(1.08); }
+.btn-cancelar-manual:hover { background: #ffedd5; transform: scale(1.08); }
+.btn-ingresar-paciente:hover { background: #d1fae5; color: #065f46; transform: scale(1.08); }
+
+/* DNI debajo del nombre del paciente */
+.dni-p {
+    font-size: 11px;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: 0.3px;
+}
+.nombre-alerta + .dni-p { color: #fde2e2; }
+
+/* ============ FASE 2: Ingreso manual / paciente expirado ============ */
+
+/* Cama con ingreso manual pendiente: fondo naranja claro */
+.cama-ingreso-manual:not(.cama-alerta):not(.cama-bano) {
+    background: #ffedd5 !important;
+    border: 2px dashed #f97316 !important;
+}
+
+/* Cama expirada (vencida sin confirmacion EsSi): fondo rojo claro */
+.cama-expirada-roja:not(.cama-alerta):not(.cama-bano) {
+    background: #fee2e2 !important;
+    border: 2px solid #dc2626 !important;
+    animation: blink-expirado 2s ease-in-out infinite;
+}
+
+@keyframes blink-expirado {
+    0%, 100% { box-shadow: 0 0 4px rgba(220, 38, 38, 0.3); }
+    50%      { box-shadow: 0 0 12px rgba(220, 38, 38, 0.7); }
+}
+
+.badge-expirado {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #dc2626;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Textos en cama de alerta */
+.letra-alerta {
+    color: #FFFFFF !important;
+}
+
+.line-alerta {
+    background-color: #FFFFFF !important;
+}
+
+.nombre-alerta {
+    color: #FFFFFF !important;
+}
+
+/* Animación de pulso para borde */
+@keyframes pulse-border {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(239, 48, 56, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(239, 48, 56, 0);
+    }
+}
+
+/* ============================================
+   ALERTA DE BAÑO - Naranja diferenciado
+   ============================================ */
+
+/* Habitación con alerta de baño (borde naranja) */
+.habitacion-alerta-bano {
+    border-color: #FF7B28 !important;
+    animation: pulse-border-bano 1.5s ease-in-out infinite;
+}
+
+/* Número de habitación en alerta de baño */
+.numero-alerta-bano {
+    background: #FF7B28 !important;
+}
+
+.numero-alerta-bano p {
+    color: #FFFFFF !important;
+}
+
+/* Indicador de baño dentro de la tarjeta */
+.bano-alerta-indicator {
+    background: #FF7B28;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 3px 6px;
+    border-bottom-right-radius: 10px;
+    animation: pulse-bano 1.5s ease-in-out infinite;
+
+    span {
+        color: #FFFFFF;
+        font-size: 13px;
+        font-weight: 900;
+    }
+}
+
+.bano-alerta-icon {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
+
+/* Animación de pulso naranja para borde */
+@keyframes pulse-border-bano {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 123, 40, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(255, 123, 40, 0);
+    }
+}
+
+@keyframes pulse-bano {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Emergencia overlay de baño (naranja) */
+.emergencia-overlay-bano {
+    background-color: rgba(255, 123, 40, 0.95) !important;
+}
+
+.emergencia-titulo-bano {
+    color: #FF7B28 !important;
+}
+
+.emergencia-cama-bano {
+    background: #FFF3E6 !important;
+
+    .emergencia-cama-paciente {
+        color: #FF7B28 !important;
+    }
+}
+
+.emergencia-bano-icon {
+    width: 40px;
+    height: 40px;
+}
+
+/* ============================================
+   EMERGENCIA OVERLAY - Popup centrado fullscreen
+   ============================================ */
+
+.emergencia-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(239, 48, 56, 0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: emergencia-fade-in 0.3s ease-out;
+}
+
+@keyframes emergencia-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.emergencia-popup {
+    background: #FFFFFF;
+    border-radius: 30px;
+    padding: 50px 60px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: emergencia-scale-in 0.3s ease-out;
+}
+
+@keyframes emergencia-scale-in {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.emergencia-titulo {
+    font-family: 'Roboto-Black';
+    font-size: 80px;
+    font-weight: 900;
+    color: #EF3038;
+    line-height: 1;
+    margin-bottom: 30px;
+    animation: blink-animation 1s steps(1, start) infinite;
+}
+
+.emergencia-cuarto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.emergencia-label {
+    font-family: 'Roboto-Black';
+    font-size: 28px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.emergencia-numero {
+    font-family: 'Roboto-Black';
+    font-size: 150px;
+    font-weight: 900;
+    color: #1957FF;
+    line-height: 1;
+}
+
+.emergencia-pacientes {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.emergencia-cama {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    background: #E6F0FF;
+    padding: 15px 30px;
+    border-radius: 15px;
+}
+
+.emergencia-cama-letra {
+    font-family: 'Roboto-Black';
+    font-size: 40px;
+    font-weight: 900;
+    color: #1957FF;
+    min-width: 50px;
+}
+
+.emergencia-cama-paciente {
+    font-family: 'Roboto-Black';
+    font-size: 32px;
+    font-weight: 900;
+    color: #1916AC;
+}
+
+/* Responsive emergencia */
+@media only screen and (max-width: 767px) {
+    .emergencia-popup {
+        padding: 30px 20px;
+        border-radius: 20px;
+    }
+
+    .emergencia-titulo {
+        font-size: 50px;
+        margin-bottom: 20px;
+    }
+
+    .emergencia-label {
+        font-size: 18px;
+    }
+
+    .emergencia-numero {
+        font-size: 100px;
+    }
+
+    .emergencia-cama {
+        padding: 10px 20px;
+        gap: 15px;
+    }
+
+    .emergencia-cama-letra {
+        font-size: 28px;
+        min-width: 35px;
+    }
+
+    .emergencia-cama-paciente {
+        font-size: 22px;
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+    .emergencia-titulo {
+        font-size: 60px;
+    }
+
+    .emergencia-numero {
+        font-size: 120px;
+    }
+
+    .emergencia-cama-letra {
+        font-size: 34px;
+    }
+
+    .emergencia-cama-paciente {
+        font-size: 26px;
+    }
+}
+
+/* Dialog responsive - Reemplaza el ancho fijo */
+body .mat-mdc-dialog-container .mdc-dialog__surface {
+    width: 90vw !important;
+    max-width: 445px !important;
+    min-width: auto !important;
+}
+
+@media only screen and (min-width: 768px) {
+    body .mat-mdc-dialog-container .mdc-dialog__surface {
+        width: 445px !important;
+        min-width: 400px !important;
+    }
+}

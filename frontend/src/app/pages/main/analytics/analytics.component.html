@@ -1,0 +1,306 @@
+<div class="analytics">
+  <!-- Header compacto -->
+  <div class="analytics-header">
+    <div class="analytics-title">
+      <button class="btn-volver" (click)="irAPrincipal()">
+        <i class="bi bi-arrow-left"></i> Volver
+      </button>
+      <h2>Analytics - {{ areaNombre }}</h2>
+    </div>
+    <div class="analytics-right">
+      <div class="analytics-filtros">
+        <label>
+          Desde:
+          <input type="date" [(ngModel)]="fechaInicio" (change)="cargarDatos()" />
+        </label>
+        <label>
+          Hasta:
+          <input type="date" [(ngModel)]="fechaFin" (change)="cargarDatos()" />
+        </label>
+      </div>
+      <button class="btn-purgar" (click)="purgarAnalytics()" [disabled]="purgando || loading" title="Eliminar todos los datos de analytics del área">
+        <i class="bi" [ngClass]="purgando ? 'bi-hourglass-split' : 'bi-trash3'"></i>
+        {{ purgando ? 'Eliminando...' : 'Limpiar datos' }}
+      </button>
+      <!-- Tab buttons -->
+      <div class="tab-buttons">
+        <button class="tab-btn" [class.active]="activeTab === 0" (click)="activeTab = 0">
+          <i class="bi bi-speedometer2"></i> Resumen
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 1" (click)="activeTab = 1">
+          <i class="bi bi-bar-chart-line"></i> Gráficos
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 2" (click)="activeTab = 2">
+          <i class="bi bi-table"></i> Tablas
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="analytics-loading">
+      <p>Cargando datos...</p>
+    </div>
+  }
+
+  @if (error && !loading) {
+    <div class="analytics-error">
+      <p>{{ error }}</p>
+      <button (click)="cargarDatos()">Reintentar</button>
+    </div>
+  }
+
+  @if (!loading && !error) {
+    <!-- TAB 0: Resumen - KPIs + 2 gráficos principales -->
+    @if (activeTab === 0) {
+      <div class="tab-content tab-resumen">
+        <!-- KPIs en 2 filas compactas -->
+        <div class="kpi-section">
+          <div class="kpi-row">
+            <div class="kpi-card kpi-primary">
+              <div class="kpi-icon"><i class="bi bi-clock-history"></i></div>
+              <div class="kpi-content">
+                <div class="kpi-value">{{ tiemposData?.tiempo_promedio_minutos || 0 }}</div>
+                <div class="kpi-label">Tiempo Prom. Respuesta (min)</div>
+              </div>
+            </div>
+            <div class="kpi-card kpi-success">
+              <div class="kpi-icon"><i class="bi bi-bell-fill"></i></div>
+              <div class="kpi-content">
+                <div class="kpi-value">{{ tiemposData?.total_alertas || 0 }}</div>
+                <div class="kpi-label">Total Alertas Resueltas</div>
+              </div>
+            </div>
+            <div class="kpi-card kpi-info">
+              <div class="kpi-icon"><i class="bi bi-hospital"></i></div>
+              <div class="kpi-content">
+                <div class="kpi-value">{{ ocupacionData?.ocupacion_actual || 0 }} / {{ ocupacionData?.total_camas || 0 }}</div>
+                <div class="kpi-label">Ocupacion Actual</div>
+              </div>
+            </div>
+            <div class="kpi-card kpi-warning">
+              <div class="kpi-icon"><i class="bi bi-percent"></i></div>
+              <div class="kpi-content">
+                <div class="kpi-value">{{ calcularPorcentajeOcupacion() }}%</div>
+                <div class="kpi-label">Tasa Ocupacion</div>
+              </div>
+            </div>
+          </div>
+          <div class="kpi-row">
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="bi bi-arrow-up-circle"></i></div>
+              <div class="kpi-content">
+                <div class="kpi-value">{{ ocupacionData?.total_ingresos || 0 }}</div>
+                <div class="kpi-label">Ingresos (periodo)</div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="bi bi-arrow-down-circle"></i></div>
+              <div class="kpi-content">
+                <div class="kpi-value">{{ ocupacionData?.total_egresos || 0 }}</div>
+                <div class="kpi-label">Egresos (periodo)</div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="bi bi-chat-square-text"></i></div>
+              <div class="kpi-content">
+                <div class="kpi-value">{{ notasData?.total || 0 }}</div>
+                <div class="kpi-label">Acciones de Notas</div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="bi bi-exclamation-triangle"></i></div>
+              <div class="kpi-content">
+                <div class="kpi-value">{{ frecuenciaData?.alertas_tipo_2 || 0 }}</div>
+                <div class="kpi-label">Emergencias (Tipo 2)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 gráficos principales -->
+        <div class="charts-flex">
+          <div class="chart-card">
+            <h3 class="chart-title">Tiempo Promedio de Respuesta por Habitacion (min)</h3>
+            <div class="chart-container">
+              <canvas baseChart
+                [data]="tiemposChartData"
+                [options]="tiemposChartOptions"
+                type="bar">
+              </canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3 class="chart-title">Distribucion de Acciones de Notas</h3>
+            <div class="chart-container">
+              <canvas baseChart
+                [data]="notasChartData"
+                [options]="notasChartOptions"
+                type="pie">
+              </canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- TAB 1: Gráficos - 2 gráficos más grandes -->
+    @if (activeTab === 1) {
+      <div class="tab-content tab-graficos">
+        <div class="charts-flex">
+          <div class="chart-card">
+            <h3 class="chart-title">Movimientos de Ocupacion por Dia</h3>
+            <div class="chart-container">
+              <canvas baseChart
+                [data]="ocupacionChartData"
+                [options]="ocupacionChartOptions"
+                type="line">
+              </canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3 class="chart-title">Frecuencia de Alertas por Hora del Dia</h3>
+            <div class="chart-container">
+              <canvas baseChart
+                [data]="frecuenciaChartData"
+                [options]="frecuenciaChartOptions"
+                type="bar">
+              </canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- TAB 2: Tablas - Todas las tablas en grid -->
+    @if (activeTab === 2) {
+      <div class="tab-content tab-tablas">
+        <div class="tables-grid">
+          <!-- Ranking de habitaciones con mas alertas -->
+          <div class="tabla-section">
+            <h3><i class="bi bi-trophy"></i> Ranking: Habitaciones con Mas Alertas</h3>
+            <div class="tabla-wrapper">
+              @if (frecuenciaData?.por_habitacion?.length) {
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Habitacion</th>
+                      <th>Urgentes</th>
+                      <th>Emergencias</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (hab of frecuenciaData.por_habitacion; track hab.habitacion_id; let i = $index) {
+                      <tr [class.highlight-row]="i < 3">
+                        <td class="ranking-pos">{{ i + 1 }}</td>
+                        <td>Hab. {{ hab.habitacion_id }}</td>
+                        <td>{{ hab.tipo_1 || 0 }}</td>
+                        <td class="emergencia-cell">{{ hab.tipo_2 || 0 }}</td>
+                        <td><strong>{{ hab.total }}</strong></td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              } @else {
+                <p class="no-data">Sin datos</p>
+              }
+            </div>
+          </div>
+
+          <!-- Alertas por dia de semana -->
+          <div class="tabla-section">
+            <h3><i class="bi bi-calendar-week"></i> Alertas por Dia de la Semana</h3>
+            <div class="tabla-wrapper">
+              @if (frecuenciaData?.por_dia_semana?.length) {
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Dia</th>
+                      <th>Total Alertas</th>
+                      <th>Barra</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (dia of frecuenciaData.por_dia_semana; track dia.dia) {
+                      <tr>
+                        <td>{{ dia.nombre }}</td>
+                        <td>{{ dia.total }}</td>
+                        <td class="bar-cell">
+                          <div class="mini-bar" [style.width.%]="calcularPorcentajeDia(dia.total)"></div>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              } @else {
+                <p class="no-data">Sin datos</p>
+              }
+            </div>
+          </div>
+
+          <!-- Tiempos por habitacion -->
+          <div class="tabla-section">
+            <h3><i class="bi bi-stopwatch"></i> Tiempos de Respuesta por Habitacion</h3>
+            <div class="tabla-wrapper">
+              @if (tiemposData?.por_habitacion?.length) {
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Habitacion</th>
+                      <th>Tiempo Prom. (min)</th>
+                      <th>Alertas</th>
+                      <th>Con Usuario</th>
+                      <th>Sin Usuario</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (hab of tiemposData.por_habitacion; track hab.habitacion_id) {
+                      <tr>
+                        <td>Hab. {{ hab.habitacion_id }}</td>
+                        <td [class.tiempo-alto]="hab.tiempo_promedio_minutos > 5">{{ hab.tiempo_promedio_minutos }} min</td>
+                        <td>{{ hab.total_alertas }}</td>
+                        <td class="success-cell">{{ hab.con_usuario }}</td>
+                        <td class="warning-cell">{{ hab.sin_usuario }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              } @else {
+                <p class="no-data">Sin datos</p>
+              }
+            </div>
+          </div>
+
+          <!-- Notas por usuario -->
+          <div class="tabla-section">
+            <h3><i class="bi bi-people"></i> Actividad de Notas por Usuario</h3>
+            <div class="tabla-wrapper">
+              @if (notasData?.por_usuario?.length) {
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Usuario</th>
+                      <th>Total Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (u of notasData.por_usuario; track u.usuario_id) {
+                      <tr>
+                        <td>{{ u.usuario_nombre }}</td>
+                        <td>{{ u.total }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              } @else {
+                <p class="no-data">Sin datos</p>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

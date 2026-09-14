@@ -1,0 +1,172 @@
+<!-- ==================== OVERLAY PERIÓDICO (centro) ==================== -->
+@if (contenido) {
+  <div class="tv-overlay-backdrop" [class.overlay-cumpleano]="esCumpleano" [class.overlay-aviso]="esAviso" [class.overlay-alerta]="esAlerta" [style.--overlay-duration]="duracionOverlay + 's'">
+
+    <!-- EFEMÉRIDE -->
+    @if (esEfemeride && efemeride) {
+      <div class="overlay-card efemeride-card">
+        <div class="efemeride-decoracion">
+          <div class="efemeride-circulo">
+            <i [class]="efemeride.icono || 'bi bi-calendar-heart'" class="efemeride-icono-grande"></i>
+          </div>
+        </div>
+        <div class="efemeride-contenido">
+          <span class="efemeride-badge" [class.badge-peru]="efemeride.tipo === 'peru'">
+            <i class="bi bi-calendar-event"></i>
+            {{ tipoEfemerideBadge }} · {{ fechaEfemeride }}
+          </span>
+          <h1 class="efemeride-titulo">{{ efemeride.titulo }}</h1>
+          @if (efemeride.descripcion) {
+            <p class="efemeride-descripcion">{{ efemeride.descripcion }}</p>
+          }
+        </div>
+        <div class="overlay-progress">
+          <div class="overlay-progress-bar"></div>
+        </div>
+      </div>
+    }
+
+    <!-- CUMPLEAÑOS (múltiples agrupados) -->
+    @if (esCumpleano && listaCumpleanos.length > 0) {
+      <div class="overlay-card cumpleano-card">
+        <!-- Confetti animado -->
+        <div class="confetti-container">
+          @for (i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]; track i) {
+            <div class="confetti-piece" [style.--confetti-index]="i"></div>
+          }
+        </div>
+
+        <div class="cumpleano-contenido">
+          <div class="cumpleano-icono-container">
+            <i class="bi bi-balloon-heart-fill cumpleano-icono-grande"></i>
+          </div>
+
+          @if (listaCumpleanos.length === 1) {
+            <p class="cumpleano-label">Feliz Cumpleaños</p>
+            <h1 class="cumpleano-nombre">{{ listaCumpleanos[0].nombre }}</h1>
+            @if (listaCumpleanos[0].cargo) {
+              <p class="cumpleano-cargo">{{ listaCumpleanos[0].cargo }}</p>
+            }
+          } @else {
+            <p class="cumpleano-label">Feliz Cumpleaños</p>
+            <div class="cumpleano-lista">
+              @for (c of listaCumpleanos; track c.id) {
+                <div class="cumpleano-persona">
+                  <h2 class="cumpleano-nombre-multi">{{ c.nombre }}</h2>
+                  @if (c.cargo) {
+                    <span class="cumpleano-cargo-multi">{{ c.cargo }}</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+
+          <div class="cumpleano-estrellas">
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+          </div>
+        </div>
+        <div class="overlay-progress cumpleano-progress">
+          <div class="overlay-progress-bar"></div>
+        </div>
+      </div>
+    }
+
+    <!-- AVISO PERIÓDICO -->
+    @if (esAviso && aviso) {
+      <div class="overlay-card aviso-card" [ngClass]="prioridadClase">
+        <div class="aviso-header">
+          <div class="aviso-icono-container">
+            @if (aviso.prioridad === 'muy_importante') {
+              <i class="bi bi-exclamation-triangle-fill aviso-icono"></i>
+            } @else if (aviso.prioridad === 'importante') {
+              <i class="bi bi-exclamation-circle-fill aviso-icono"></i>
+            } @else {
+              <i class="bi bi-info-circle-fill aviso-icono"></i>
+            }
+          </div>
+          <span class="aviso-prioridad-badge">{{ prioridadTexto }}</span>
+        </div>
+        <div class="aviso-contenido">
+          <h1 class="aviso-titulo">{{ aviso.titulo }}</h1>
+          <p class="aviso-mensaje">{{ aviso.mensaje }}</p>
+        </div>
+        <div class="overlay-progress" [ngClass]="prioridadClase + '-progress'">
+          <div class="overlay-progress-bar"></div>
+        </div>
+      </div>
+    }
+    <!-- ALERTA DE CAMA -->
+    @if (esAlerta && alerta) {
+      <div class="overlay-card alerta-card" [class.alerta-bano]="alerta.esBano" [class.alerta-nota]="alerta.nota">
+        <div class="alerta-header">
+          <div class="alerta-icono-container">
+            @if (alerta.nota) {
+              <i class="bi bi-clipboard2-pulse-fill alerta-icono"></i>
+            } @else if (alerta.esBano) {
+              <i class="bi bi-door-open-fill alerta-icono"></i>
+            } @else {
+              <i class="bi bi-bell-fill alerta-icono"></i>
+            }
+          </div>
+          <span class="alerta-tipo-badge">
+            @if (alerta.nota) {
+              ASISTIR — {{ alerta.nota }}
+            } @else if (alerta.esBano) {
+              ASISTENCIA BAÑO
+            } @else {
+              LLAMADA DE ASISTENCIA
+            }
+          </span>
+        </div>
+
+        <div class="alerta-body">
+          <div class="alerta-habitacion">
+            <span class="alerta-habitacion-label">Habitación</span>
+            <span class="alerta-habitacion-numero">{{ alerta.habitacion }}</span>
+          </div>
+
+          <div class="alerta-camas-lista">
+            @for (cama of alerta.camas; track cama.nombre) {
+              <div class="alerta-cama-item">
+                @if (cama.paciente === 'Baño') {
+                  <i class="bi bi-door-open-fill alerta-cama-icono-bano"></i>
+                  <span class="alerta-cama-paciente">Baño</span>
+                } @else {
+                  <span class="alerta-cama-letra">{{ cama.nombre }}</span>
+                  <span class="alerta-cama-paciente">{{ cama.paciente || 'Sin paciente' }}</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="alerta-footer">
+          <i class="bi bi-clock"></i>
+          <span>{{ alerta.hora }}</span>
+        </div>
+
+        <div class="overlay-progress alerta-progress">
+          <div class="overlay-progress-bar"></div>
+        </div>
+      </div>
+    }
+
+  </div>
+}
+
+<!-- ==================== BANNER PERMANENTE (superior) ==================== -->
+@if (avisosPermanentes.length > 0) {
+  <div class="banner-permanente">
+    @for (a of avisosPermanentes; track a.id) {
+      <div class="banner-item" [style.border-left-color]="getPrioridadColor(a.prioridad)">
+        <i class="bi bi-megaphone-fill banner-icon" [style.color]="getPrioridadColor(a.prioridad)"></i>
+        <div class="banner-texto">
+          <strong>{{ a.titulo }}</strong>
+          <span>{{ a.mensaje }}</span>
+        </div>
+      </div>
+    }
+  </div>
+}

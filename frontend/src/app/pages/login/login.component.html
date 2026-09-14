@@ -1,0 +1,88 @@
+<div class="login-bg flex flex-col tablet:flex-row items-center justify-center tablet:justify-evenly gap-8 tablet:gap-12 p-4 tablet:p-8">
+  <!-- Logo y descripción -->
+  <div class="container-logo flex flex-col items-center tablet:items-start w-full max-w-lg tablet:max-w-xl">
+    <img
+      class="pseudologo_e h-8 tablet:h-10"
+      src="assets/icons/logo_essalud_blanco.svg"
+      alt="logo-essalud"
+    />
+    <img
+      class="pseudologo_a w-full max-w-md py-6 tablet:py-10"
+      src="assets/icons/logo-asistencia de camas.svg"
+      alt="logo-asistencia"
+    />
+    <div class="text-lg text-white text-center tablet:text-justify text-sm tablet:text-base leading-relaxed">
+      Sistema de llamadas paciente - enfermera ofrece una solución completa para la gestión de la comunicación
+      hospitalaria permitiendo mejorar la experiencia del asegurado durante la hospitalización.
+    </div>
+  </div>
+
+  <!-- Formulario de login -->
+  <div class="container-login bg-white rounded-2xl shadow-lg p-6 tablet:p-10 w-full max-w-sm tablet:max-w-md">
+    <div class="title-lg text-primary text-xl tablet:text-2xl font-bold text-center pb-4">
+      Inicio de sesión
+    </div>
+
+    <form class="py-4 tablet:py-6" [formGroup]="loginForm" #formLogin="ngForm">
+      <!-- Campo Usuario -->
+      <div class="mb-4">
+        <label for="usuario" class="form-label text-sm tablet:text-base">Usuario</label>
+        <div class="input-group">
+          <input
+            type="text"
+            id="usuario"
+            class="form-control"
+            aria-label="Usuario"
+            formControlName="usuario"
+            (keypress)="loginKey($event)"
+            aria-describedby="basic-addon2"
+            [disabled]="loading"
+          />
+          <span class="input-group-text text-xs tablet:text-sm" id="basic-addon2">&#64;essalud.gob.pe</span>
+        </div>
+      </div>
+
+      <!-- Campo Contraseña -->
+      <div class="mb-4">
+        <label for="clave" class="form-label text-sm tablet:text-base">Contraseña</label>
+        <div class="input-password">
+          <input
+            [type]="auxClave ? 'text' : 'password'"
+            class="clave"
+            maxlength="25"
+            formControlName="clave"
+            (keypress)="loginKey($event)"
+            (focus)="onFocus()"
+            (blur)="onBlur()"
+            id="clave"
+            name="clave"
+            placeholder="Contraseña"
+            [disabled]="loading"
+          />
+          <span class="icon-eye" (click)="verClave()">
+            <i [class]="'bi bi-eye' + (auxClave ? '-slash' : '')"></i>
+          </span>
+        </div>
+      </div>
+    </form>
+
+    <!-- Botón de login -->
+    <div class="btn-login pt-2">
+      <button
+        type="submit"
+        class="btn btn-primary w-full py-2 tablet:py-3 text-sm tablet:text-base flex items-center justify-center gap-2"
+        [disabled]="!loginForm.valid || loading"
+        (click)="login()"
+      >
+        @if (loading) {
+          <div class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+          <span>Ingresando...</span>
+        } @else {
+          <span>Iniciar Sesión</span>
+        }
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

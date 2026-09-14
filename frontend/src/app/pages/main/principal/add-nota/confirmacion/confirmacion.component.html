@@ -1,0 +1,12 @@
+<div class="msnBox custom-modal-body">
+    <div mat-dialog-content class="texto custom-modal-content" style="text-align: center;" >
+        <div class="custom-gif">
+            <ng-lottie [options]="options" [styles]="styles" />
+        </div>
+        <h2>{{mensaje}}</h2>
+    </div>
+    <mat-dialog-actions class="custom-modal-footer">
+        <button type="button" class="btn btn-light" (click)="cerrarDialogo()"><i class="bi bi-x-lg"></i> Cancelar</button>
+        <button type="button" class="btn btn-success" cdkFocusInitial (click)="confirmado()"><i class="bi bi-check-lg"></i> Aceptar</button>
+    </mat-dialog-actions>
+</div>

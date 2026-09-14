@@ -79,25 +79,36 @@ pasillo ya se encendió igual.
 
 ## Qué hay en este repositorio
 
-Este es un repositorio de portafolio: contiene el **firmware ESP-NOW**, que es la
-pieza que mejor explica el diseño, y la documentación de arquitectura. El sistema
-completo —backend, panel, migraciones, integración hospitalaria— es privado, porque
-opera sobre datos de pacientes reales.
+El sistema completo y ejecutable: firmware, backend, panel, base de datos y el
+`docker-compose` que lo levanta.
 
 ```
-firmware/
-├── cuarto/          ESP32 de la habitación: recibe ESP-NOW, enciende la luz,
-│                    publica por MQTT y sirve su propia interfaz de configuración
-└── luces-pasillo/   ESP32 del indicador de pasillo
-docs/
-├── arquitectura.md        las cuatro capas, y lo que conviene saber antes de tocarlo
-└── por-que-hacia-falta.md la evidencia institucional que sustento el piloto
+firmware/       un solo firmware para los 3 tipos de dispositivo (cuarto, baño, luz)
+backend/        Node.js + Express, por modulos. Logica en src/function/*.sql
+frontend/       Angular 17 + Material
+database/       migraciones numeradas y migrate.sh
+mosquitto/      broker MQTT
+docs/           arquitectura y la evidencia que sustento el piloto
+docker-compose.yml · Makefile · .env.example
 ```
 
-Cada ESP32 sirve **una interfaz web embebida desde LittleFS** para configurarlo en
-sitio —red, dirección, emparejamiento— sin reflashear y sin un portátil con el IDE.
-En un hospital, donde el técnico llega con un teléfono, eso es la diferencia entre
-una instalación de cinco minutos y una de una hora.
+### Levantarlo
+
+```bash
+cp .env.example .env      # y ajusta los valores
+docker compose up -d      # postgres, migraciones, mosquitto, backend y panel
+```
+
+El servicio `db-migrate` aplica las migraciones en orden antes de que arranque el
+backend, así que la base queda lista sin pasos manuales.
+
+Para el firmware: se abre en el IDE de Arduino con el core de ESP32. Al arrancar sin
+configurar, el dispositivo levanta su propio punto de acceso y se configura desde el
+navegador de un teléfono — ver [firmware/README.md](firmware/README.md).
+
+**Lo que no está aquí:** los datos. Ni el volcado de pacientes, ni los CSV de censo,
+ni las credenciales. El esquema y las migraciones sí, así que la base se construye
+vacía y funcional.
 
 ---
 

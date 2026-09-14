@@ -1,0 +1,195 @@
+// === Estilos de Dialog ===
+$primary: #1957FF;
+$primary-dark: #0D3BBF;
+$border: #E2E8F0;
+$text: #1E293B;
+$text-muted: #64748B;
+
+.dialog-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid $border;
+
+  i {
+    font-size: 22px;
+    color: $primary;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: $text;
+  }
+}
+
+.dialog-body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-muted;
+  }
+
+  input, select, textarea {
+    padding: 10px 14px;
+    border: 1.5px solid $border;
+    border-radius: 8px;
+    font-size: 14px;
+    color: $text;
+    background: white;
+    transition: border-color 0.2s;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 3px rgba(25, 87, 255, 0.1);
+    }
+
+    &::placeholder {
+      color: #CBD5E1;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 70px;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+
+  .form-group {
+    flex: 1;
+  }
+}
+
+// Icon grid
+.icon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+  background: #F8FAFC;
+  border-radius: 8px;
+  border: 1.5px solid $border;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.icon-option {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+
+  i { font-size: 18px; color: $text-muted; }
+
+  &:hover {
+    border-color: $primary;
+    background: #EEF2FF;
+    i { color: $primary; }
+  }
+
+  &.selected {
+    border-color: $primary;
+    background: $primary;
+    i { color: white; }
+  }
+}
+
+.icon-selected {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #EEF2FF;
+  border-radius: 6px;
+  margin-top: 4px;
+
+  i { color: $primary; font-size: 18px; }
+  span { font-size: 12px; color: $text-muted; font-family: monospace; }
+
+  .btn-clear {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: $text-muted;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 4px;
+
+    &:hover { background: #E2E8F0; }
+  }
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px 20px;
+  border-top: 1px solid $border;
+}
+
+.btn-cancel {
+  padding: 8px 20px;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  background: white;
+  color: $text;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: #F8FAFC; }
+}
+
+.btn-save {
+  padding: 8px 24px;
+  border: none;
+  border-radius: 8px;
+  background: $primary;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+
+  &:hover { background: $primary-dark; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}

@@ -1,0 +1,620 @@
+// === Página de administración de Contenido TV ===
+
+$primary: #1957FF;
+$primary-dark: #0D3BBF;
+$bg-page: #F5F7FA;
+$bg-card: #FFFFFF;
+$text-dark: #1E293B;
+$text-muted: #64748B;
+$border: #E2E8F0;
+$red: #DC2626;
+$green: #16A34A;
+
+.contenido-tv-page {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: $text-dark;
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    i {
+      color: $primary;
+    }
+  }
+
+  .page-subtitle {
+    color: $text-muted;
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+// Tabs
+:host ::ng-deep {
+  .mat-mdc-tab-group {
+    border-radius: 12px;
+    overflow: hidden;
+    background: $bg-card;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .mat-mdc-tab-header {
+    border-bottom: 1px solid $border;
+  }
+
+  .mdc-tab__text-label {
+    font-weight: 600;
+    font-size: 14px;
+  }
+}
+
+.tab-icon {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.tab-content {
+  padding: 20px;
+}
+
+.tab-actions {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-agregar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background: $primary;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: $primary-dark;
+  }
+
+  i {
+    font-size: 16px;
+  }
+}
+
+// Scroll para tablas largas
+.table-scroll {
+  max-height: 480px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid $border;
+  border-radius: 8px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  thead {
+    background: #F8FAFC;
+
+    th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 700;
+      color: $text-dark;
+      border-bottom: 2px solid $border;
+      white-space: nowrap;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $border;
+      transition: background 0.15s;
+
+      &:hover {
+        background: #F8FAFC;
+      }
+    }
+
+    td {
+      padding: 12px 16px;
+      color: $text-dark;
+      vertical-align: middle;
+
+      .text-muted {
+        color: $text-muted;
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+.td-fecha {
+  white-space: nowrap;
+  font-weight: 600;
+  color: $primary !important;
+  min-width: 80px;
+}
+
+.td-icono {
+  font-size: 20px;
+  color: $primary;
+  text-align: center;
+}
+
+.td-mensaje {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.td-empty {
+  text-align: center;
+  color: $text-muted;
+  padding: 40px 16px !important;
+  font-style: italic;
+}
+
+.td-acciones {
+  white-space: nowrap;
+  display: flex;
+  gap: 8px;
+}
+
+// Badges
+.badge-tipo {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #E0E7FF;
+  color: $primary;
+
+  &.badge-peru {
+    background: #FEE2E2;
+    color: $red;
+  }
+
+  &.badge-intl {
+    background: #DBEAFE;
+    color: #1D4ED8;
+  }
+}
+
+.badge-prioridad {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+}
+
+// Botones de acción
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  i {
+    font-size: 14px;
+  }
+}
+
+.btn-edit {
+  background: #E0E7FF;
+  color: $primary;
+
+  &:hover {
+    background: $primary;
+    color: white;
+  }
+}
+
+.btn-delete {
+  background: #FEE2E2;
+  color: $red;
+
+  &:hover {
+    background: $red;
+    color: white;
+  }
+}
+
+// Badge modo display
+.badge-modo {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #F0FDF4;
+  color: $green;
+
+  &.badge-permanente {
+    background: #FEF3C7;
+    color: #92400E;
+  }
+}
+
+// Configuración
+.config-section {
+  margin-bottom: 28px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    i {
+      color: $primary;
+    }
+  }
+
+  .config-desc {
+    font-size: 14px;
+    color: $text-muted;
+    margin: 0 0 20px 0;
+  }
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.config-item {
+  background: #F8FAFC;
+  border: 1.5px solid $border;
+  border-radius: 10px;
+  padding: 16px;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-muted;
+    margin-bottom: 10px;
+
+    i {
+      font-size: 16px;
+      color: $primary;
+    }
+  }
+
+  input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid $border;
+    border-radius: 8px;
+    font-size: 14px;
+    color: $text-dark;
+    background: white;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 3px rgba(25, 87, 255, 0.1);
+    }
+  }
+
+  select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid $border;
+    border-radius: 8px;
+    font-size: 14px;
+    color: $text-dark;
+    background: white;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 3px rgba(25, 87, 255, 0.1);
+    }
+  }
+
+  .config-hint {
+    display: block;
+    font-size: 12px;
+    color: $text-muted;
+    margin-top: 6px;
+  }
+}
+
+// Audio config
+.audio-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F8FAFC;
+  border: 1.5px solid $border;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-dark;
+
+  i {
+    font-size: 18px;
+    color: $primary;
+  }
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #CBD5E1;
+    transition: 0.3s;
+    border-radius: 26px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+  }
+
+  input:checked + .toggle-slider {
+    background-color: $primary;
+  }
+
+  input:checked + .toggle-slider::before {
+    transform: translateX(22px);
+  }
+}
+
+.audio-volumen-item {
+  margin-bottom: 16px;
+}
+
+.volumen-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  input[type="range"] {
+    flex: 1;
+    height: 6px;
+    padding: 0;
+    border: none;
+    border-radius: 3px;
+    appearance: none;
+    background: #E2E8F0;
+    outline: none;
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: $primary;
+      cursor: pointer;
+    }
+
+    &::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: $primary;
+      cursor: pointer;
+      border: none;
+    }
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+
+  .volumen-valor {
+    min-width: 40px;
+    text-align: right;
+    font-size: 14px;
+    font-weight: 700;
+    color: $primary;
+  }
+}
+
+.sonido-select-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  select {
+    flex: 1;
+  }
+}
+
+.btn-preview {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+
+  i {
+    font-size: 18px;
+    color: $primary;
+  }
+
+  &:hover {
+    background: $primary;
+    border-color: $primary;
+
+    i {
+      color: white;
+    }
+  }
+}
+
+.upload-row {
+  margin-bottom: 16px;
+}
+
+.btn-upload {
+  cursor: pointer;
+
+  &:hover {
+    background: $primary-dark;
+  }
+}
+
+.sonidos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sonido-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #F8FAFC;
+  border: 1px solid $border;
+  border-radius: 8px;
+
+  > i {
+    font-size: 18px;
+    color: $primary;
+  }
+
+  .sonido-nombre {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: $text-dark;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.text-muted-small {
+  font-size: 13px;
+  color: $text-muted;
+  font-style: italic;
+}
+
+// === Pantallas TV ===
+.td-enlace {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.enlace-code {
+  font-size: 12px;
+  color: $primary;
+  background: #F0F7FF;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.btn-copy-small {
+  padding: 4px 6px !important;
+  min-width: auto !important;
+
+  i { font-size: 13px; }
+
+  &:hover {
+    color: $primary !important;
+    background: #EEF2FF !important;
+  }
+}
+
+.badge-estado {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-activo {
+  background: #DCFCE7;
+  color: $green;
+}
+
+.badge-inactivo {
+  background: #FEE2E2;
+  color: $red;
+}

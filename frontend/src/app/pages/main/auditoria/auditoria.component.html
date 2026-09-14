@@ -1,0 +1,88 @@
+<div class="auditoria-page">
+  <div class="page-header">
+    <h1><i class="bi bi-journal-text"></i> Auditoría de cambios</h1>
+    <p class="page-subtitle">Historial de todas las acciones sobre camas, pacientes y configuración del sistema.</p>
+  </div>
+
+  <div class="filtros-bar">
+    <div class="filtro">
+      <label>Desde:</label>
+      <input type="date" [(ngModel)]="filtroDesde">
+    </div>
+    <div class="filtro">
+      <label>Hasta:</label>
+      <input type="date" [(ngModel)]="filtroHasta">
+    </div>
+    <div class="filtro">
+      <label>Acción:</label>
+      <select [(ngModel)]="filtroAccion">
+        @for (a of acciones; track a.value) {
+          <option [value]="a.value">{{ a.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="filtros-acciones">
+      <button class="btn-aplicar" (click)="aplicarFiltros()">
+        <i class="bi bi-funnel"></i> Aplicar
+      </button>
+      <button class="btn-limpiar" (click)="limpiarFiltros()">
+        <i class="bi bi-x-circle"></i> Limpiar
+      </button>
+      <button class="btn-csv" (click)="descargarCsv()" [disabled]="descargando">
+        <i class="bi bi-download"></i> {{ descargando ? 'Descargando...' : 'Descargar CSV' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="tabla-info">
+    @if (loading) {
+      <span>Cargando…</span>
+    } @else {
+      <span>Mostrando {{ registros.length }} de {{ total }} registros</span>
+    }
+  </div>
+
+  <div class="table-scroll">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Fecha/hora</th>
+          <th>Acción</th>
+          <th>Usuario</th>
+          <th>Habitación/Cama</th>
+          <th>Paciente</th>
+          <th>DNI</th>
+          <th>Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of registros; track r.id) {
+          <tr [class]="rowClass(r.accion)">
+            <td class="td-fecha">{{ formatearFecha(r.fecha_evento) }}</td>
+            <td><span class="badge-accion">{{ r.accion }}</span></td>
+            <td>{{ r.usuario_nombre || (r.usuario_login || '(sistema)') }}</td>
+            <td>{{ r.codhab || '' }}{{ r.codcama || '' }}</td>
+            <td>{{ r.paciente || '' }}</td>
+            <td>{{ r.nrodocidepac || '' }}</td>
+            <td class="td-detalle" [title]="r.detalle || ''">{{ r.detalle || '' }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="7" class="td-empty">{{ loading ? 'Cargando…' : 'Sin registros' }}</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (total > pageSize) {
+    <div class="paginacion">
+      <button (click)="irPagina(pagina - 1)" [disabled]="pagina <= 1">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <span>Página {{ pagina }} de {{ totalPaginas }}</span>
+      <button (click)="irPagina(pagina + 1)" [disabled]="pagina >= totalPaginas">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  }
+</div>

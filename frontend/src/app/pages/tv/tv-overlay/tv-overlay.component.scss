@@ -1,0 +1,740 @@
+// === TV Overlay - Estilos para efemérides, cumpleaños y avisos ===
+
+:host {
+  display: contents;
+}
+
+// Variables
+$overlay-z: 900; // menor que emergencia (1000+)
+$efemeride-primary: #1957FF;
+$efemeride-gradient: linear-gradient(135deg, #1957FF 0%, #0D3BBF 50%, #1B0A5E 100%);
+$cumpleano-gradient: linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%);
+$cumpleano-gold: #F59E0B;
+$aviso-normal-bg: #1E40AF;
+$aviso-importante-bg: #D97706;
+$aviso-muy-importante-bg: #DC2626;
+
+// === Backdrop overlay ===
+.tv-overlay-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: $overlay-z;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.6s ease-out;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+// === Card base ===
+.overlay-card {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+  max-width: 70vw;
+  min-width: 50vw;
+}
+
+// === Progress bar (timer visual) ===
+.overlay-progress {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.overlay-progress-bar {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  animation: progressShrink var(--overlay-duration, 15s) linear forwards;
+  border-radius: 0 2px 2px 0;
+}
+
+// =============================================
+// EFEMÉRIDE
+// =============================================
+.efemeride-card {
+  background: $efemeride-gradient;
+  display: flex;
+  flex-direction: row;
+  padding: 50px;
+  gap: 40px;
+  align-items: center;
+}
+
+.efemeride-decoracion {
+  flex-shrink: 0;
+}
+
+.efemeride-circulo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.efemeride-icono-grande {
+  font-size: 52px;
+  color: white;
+}
+
+.efemeride-contenido {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.efemeride-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 600;
+  width: fit-content;
+
+  i {
+    font-size: 14px;
+  }
+
+  &.badge-peru {
+    background: rgba(239, 68, 68, 0.3);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+  }
+}
+
+.efemeride-titulo {
+  color: white;
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 900;
+  margin: 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.efemeride-descripcion {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(16px, 1.5vw, 22px);
+  margin: 0;
+  line-height: 1.5;
+}
+
+// =============================================
+// CUMPLEAÑOS
+// =============================================
+.cumpleano-card {
+  background: $cumpleano-gradient;
+  padding: 50px 60px;
+  text-align: center;
+  position: relative;
+}
+
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: -10px;
+  opacity: 0;
+  animation: confettiFall 4s ease-in infinite;
+  animation-delay: calc(var(--confetti-index) * 0.2s);
+  left: calc(var(--confetti-index) * 5%);
+
+  &:nth-child(odd) {
+    background: $cumpleano-gold;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+  }
+
+  &:nth-child(even) {
+    background: white;
+    border-radius: 2px;
+    transform: rotate(45deg);
+  }
+
+  &:nth-child(3n) {
+    background: #EC4899;
+    width: 6px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  &:nth-child(5n) {
+    background: #34D399;
+    width: 12px;
+    height: 6px;
+    border-radius: 3px;
+  }
+}
+
+.cumpleano-contenido {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.cumpleano-icono-container {
+  margin-bottom: 10px;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.cumpleano-icono-grande {
+  font-size: 64px;
+  color: $cumpleano-gold;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.cumpleano-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.cumpleano-nombre {
+  color: white;
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 900;
+  margin: 0;
+  line-height: 1.2;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cumpleano-cargo {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(18px, 2vw, 26px);
+  margin: 0;
+  font-weight: 500;
+}
+
+// Múltiples cumpleaños
+.cumpleano-lista {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px 40px;
+  margin: 10px 0;
+}
+
+.cumpleano-persona {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.cumpleano-nombre-multi {
+  color: white;
+  font-size: clamp(22px, 2.5vw, 36px);
+  font-weight: 800;
+  margin: 0;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.cumpleano-cargo-multi {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: clamp(14px, 1.2vw, 18px);
+  font-weight: 500;
+}
+
+.cumpleano-estrellas {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+
+  i {
+    color: $cumpleano-gold;
+    font-size: 24px;
+    animation: twinkle 1.5s ease-in-out infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+  }
+}
+
+.cumpleano-progress {
+  .overlay-progress-bar {
+    background: $cumpleano-gold;
+  }
+}
+
+// =============================================
+// AVISOS
+// =============================================
+.aviso-card {
+  padding: 40px 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.aviso-card.aviso-normal {
+  background: linear-gradient(135deg, #1E40AF 0%, #1D4ED8 100%);
+}
+
+.aviso-card.aviso-importante {
+  background: linear-gradient(135deg, #B45309 0%, #D97706 100%);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), pulseBorder 2s ease-in-out infinite;
+}
+
+.aviso-card.aviso-muy_importante {
+  background: linear-gradient(135deg, #991B1B 0%, #DC2626 100%);
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), pulseBorderRed 1.5s ease-in-out infinite;
+}
+
+.aviso-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.aviso-icono-container {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aviso-icono {
+  font-size: 28px;
+  color: white;
+}
+
+.aviso-muy_importante .aviso-icono {
+  animation: shake 0.8s ease-in-out infinite;
+}
+
+.aviso-prioridad-badge {
+  color: white;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.aviso-contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aviso-titulo {
+  color: white;
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 900;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.aviso-mensaje {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(16px, 1.5vw, 22px);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.aviso-muy_importante-progress .overlay-progress-bar {
+  background: #FCA5A5;
+}
+
+.aviso-importante-progress .overlay-progress-bar {
+  background: #FCD34D;
+}
+
+// =============================================
+// ALERTA DE CAMA
+// =============================================
+$alerta-gradient: linear-gradient(135deg, #1957FF 0%, #0D47A1 100%);
+$alerta-bano-gradient: linear-gradient(135deg, #E65100 0%, #FF7B28 100%);
+$alerta-nota-gradient: linear-gradient(135deg, #B91C1C 0%, #EF4444 100%);
+
+.alerta-card {
+  background: $alerta-gradient;
+  padding: 40px 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), pulseAlerta 2s ease-in-out infinite;
+
+  &.alerta-bano {
+    background: $alerta-bano-gradient;
+  }
+
+  &.alerta-nota {
+    background: $alerta-nota-gradient;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+  }
+}
+
+.alerta-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.alerta-icono-container {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.alerta-icono {
+  font-size: 28px;
+  color: white;
+}
+
+.alerta-tipo-badge {
+  color: white;
+  font-size: clamp(16px, 1.8vw, 24px);
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.alerta-body {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.alerta-habitacion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.alerta-habitacion-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: clamp(14px, 1.2vw, 18px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.alerta-habitacion-numero {
+  color: white;
+  font-size: clamp(48px, 6vw, 90px);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.alerta-camas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.alerta-cama-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.alerta-cama-letra {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: clamp(18px, 2vw, 26px);
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.alerta-cama-icono-bano {
+  font-size: clamp(22px, 2vw, 30px);
+  color: white;
+}
+
+.alerta-cama-paciente {
+  color: white;
+  font-size: clamp(20px, 2.5vw, 34px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.alerta-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: clamp(14px, 1.2vw, 20px);
+  font-weight: 500;
+
+  i {
+    font-size: clamp(14px, 1.2vw, 18px);
+  }
+}
+
+.alerta-progress .overlay-progress-bar {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+@keyframes pulseAlerta {
+  0%, 100% {
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 30px 5px rgba(25, 87, 255, 0.3);
+  }
+}
+
+.alerta-bano {
+  @keyframes pulseAlerta {
+    0%, 100% {
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+    }
+    50% {
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 30px 5px rgba(255, 123, 40, 0.3);
+    }
+  }
+}
+
+// =============================================
+// ANIMACIONES
+// =============================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes progressShrink {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px 10px rgba(255, 255, 255, 0.15);
+  }
+}
+
+@keyframes confettiFall {
+  0% {
+    opacity: 1;
+    top: -10px;
+    transform: translateX(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    top: 100%;
+    transform: translateX(calc(var(--confetti-index) * 3px - 30px)) rotate(720deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes pulseBorder {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(217, 119, 6, 0.3);
+  }
+}
+
+@keyframes pulseBorderRed {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 25px 8px rgba(220, 38, 38, 0.35);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-3px) rotate(-2deg);
+  }
+  40% {
+    transform: translateX(3px) rotate(2deg);
+  }
+  60% {
+    transform: translateX(-2px) rotate(-1deg);
+  }
+  80% {
+    transform: translateX(2px) rotate(1deg);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// BANNER PERMANENTE (flujo normal, debajo del header)
+// =============================================
+.banner-permanente {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 8px 16px;
+  animation: slideDown 0.5s ease-out;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.banner-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-left: 4px solid;
+  border-radius: 4px;
+
+  & + & {
+    margin-left: 12px;
+  }
+}
+
+.banner-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.banner-texto {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+
+  strong {
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  span {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

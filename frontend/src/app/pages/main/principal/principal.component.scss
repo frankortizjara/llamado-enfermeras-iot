@@ -1,0 +1,82 @@
+/* Principal Component - TV Display Layout */
+
+:host {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  width: 100%;
+}
+
+/* Override dialog width for responsive */
+:host ::ng-deep {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    width: 90vw;
+    max-width: 520px;
+    min-width: auto;
+
+    @media (min-width: 768px) {
+      width: 520px;
+      min-width: 400px;
+    }
+  }
+}
+
+/* Titulo responsive */
+.titulo-h {
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 0;
+
+  .titulo-h-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .sync-info {
+    font-size: 11px;
+    font-weight: 400;
+    color: #888;
+    letter-spacing: 0.3px;
+  }
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .sync-info {
+      font-size: 10px;
+    }
+  }
+}
+
+/* Boton reconocer alerta en overlay de emergencia */
+.btn-reconocer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 12px 32px;
+  background-color: #28a745;
+  color: white;
+  border: 2px solid white;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  letter-spacing: 0.5px;
+
+  &:hover {
+    background-color: #218838;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  i {
+    font-size: 22px;
+  }
+}

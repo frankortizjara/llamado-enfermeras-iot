@@ -1,0 +1,79 @@
+<nav class="navbar">
+  <!-- Logo y nombre del sistema -->
+  <div class="navbar-left">
+    <a class="logo-link" (click)="irAPrincipal()" title="Ir al inicio">
+      <img
+        src="assets/icons/isotipo_essalud_blanco.svg"
+        alt="logo-isotipo"
+        class="logo-isotipo"
+      />
+      <img
+        src="assets/icons/logo-asistencia de camas.svg"
+        alt="logo-asistencia"
+        class="logo-asistencia"
+      />
+    </a>
+    <button class="btn-home" type="button" (click)="irAPrincipal()" title="Ir al inicio">
+      <i class="bi bi-house-door-fill"></i>
+    </button>
+    @if (areaNombre) {
+      <span class="area-nombre">{{ areaNombre }}</span>
+    }
+  </div>
+
+  <!-- Navegacion y usuario -->
+  <div class="navbar-right">
+    @if (verDispositivos) {
+      <button class="btn-nav" type="button" (click)="irADispositivos()">
+        <i class="bi bi-cpu-fill"></i>
+        <span class="btn-nav-text">Dispositivos</span>
+      </button>
+    }
+    @if (verAnalytics) {
+      <button class="btn-nav" type="button" (click)="irAAnalytics()">
+        <i class="bi bi-bar-chart-fill"></i>
+        <span class="btn-nav-text">Analytics</span>
+      </button>
+    }
+    @if (verContenidoTv) {
+      <button class="btn-nav" type="button" (click)="irAContenidoTv()">
+        <i class="bi bi-tv"></i>
+        <span class="btn-nav-text">Contenido TV</span>
+      </button>
+    }
+    @if (verUsuarios) {
+      <button class="btn-nav" type="button" (click)="irAAdminUsuarios()">
+        <i class="bi bi-people-fill"></i>
+        <span class="btn-nav-text">Usuarios</span>
+      </button>
+    }
+    <button class="btn-nav" type="button" (click)="irAAuditoria()" title="Auditoría de cambios">
+      <i class="bi bi-journal-text"></i>
+      <span class="btn-nav-text">Auditoría</span>
+    </button>
+    <div class="user-info">
+      <i class="bi bi-person-fill"></i>
+      <span class="user-name">{{ nombreSesion }}</span>
+    </div>
+    <div class="dropdown">
+      <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
+        <i class="bi bi-caret-down-fill"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-end">
+        <button class="dropdown-item" type="button" (click)="verMiConfig()">
+          <i class="bi bi-gear-fill"></i>
+          <span>Mi configuracion</span>
+        </button>
+        <button class="dropdown-item" type="button" (click)="irACambiarMiClave()">
+          <i class="bi bi-key-fill"></i>
+          <span>Cambiar mi clave</span>
+        </button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" type="button" (click)="cerrarSesion()">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Cerrar sesion</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>

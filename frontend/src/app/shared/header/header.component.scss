@@ -1,0 +1,238 @@
+// Variables
+$primary: #1957FF;
+
+// Navbar base
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: $primary;
+  padding: 8px 16px;
+  min-height: 48px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    min-height: 56px;
+    padding: 8px 24px;
+  }
+
+  @media (min-width: 1024px) {
+    min-height: 64px;
+    padding: 8px 32px;
+  }
+}
+
+// Iconos blancos por defecto
+.bi {
+  color: #FFFFFF;
+}
+
+// Lado izquierdo del navbar
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  @media (min-width: 768px) {
+    gap: 16px;
+  }
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.logo-isotipo {
+  height: 24px;
+  width: auto;
+
+  @media (min-width: 768px) {
+    height: 28px;
+  }
+}
+
+.logo-asistencia {
+  height: 32px;
+  width: auto;
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+    height: 40px;
+  }
+}
+
+.btn-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  i {
+    font-size: 16px;
+    color: white;
+  }
+}
+
+.area-nombre {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 8px;
+  display: none;
+
+  @media (min-width: 1024px) {
+    display: inline;
+  }
+}
+
+// Lado derecho del navbar
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  @media (min-width: 768px) {
+    gap: 12px;
+  }
+}
+
+// Botones de navegacion (Dispositivos, Analytics)
+.btn-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  i {
+    font-size: 15px;
+    color: white;
+  }
+
+  .btn-nav-text {
+    display: none;
+
+    @media (min-width: 768px) {
+      display: inline;
+    }
+  }
+}
+
+// Info de usuario
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: white;
+
+  i {
+    font-size: 18px;
+  }
+
+  .user-name {
+    font-size: 14px;
+    font-weight: 400;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: none;
+
+    @media (min-width: 768px) {
+      display: inline;
+      max-width: 200px;
+    }
+  }
+}
+
+// Dropdown
+.dropdown {
+  position: relative;
+
+  .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    color: white;
+    text-decoration: none;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 160px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 8px 0;
+    margin-top: 4px;
+    display: none;
+    z-index: 1000;
+
+    &.show {
+      display: block;
+    }
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover {
+      background: #f5f5f5;
+    }
+
+    i {
+      color: #666;
+      font-size: 16px;
+    }
+  }
+}

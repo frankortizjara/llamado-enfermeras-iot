@@ -1,0 +1,267 @@
+<div class="estadisticas-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="irADispositivos()">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <h1>Estadísticas de Dispositivos</h1>
+    </div>
+    <div class="header-right">
+      <button class="btn-purgar" (click)="purgarEventos()" [disabled]="purgando || loading" title="Eliminar todos los datos de conexión/desconexión">
+        <i class="bi" [ngClass]="purgando ? 'bi-hourglass-split' : 'bi-trash3'"></i>
+        {{ purgando ? 'Eliminando...' : 'Limpiar datos' }}
+      </button>
+      <div class="date-filters">
+        <div class="date-field">
+          <label>Desde</label>
+          <input type="date" [(ngModel)]="fechaInicio" (change)="cargarEstadisticas()">
+        </div>
+        <div class="date-field">
+          <label>Hasta</label>
+          <input type="date" [(ngModel)]="fechaFin" (change)="cargarEstadisticas()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando estadísticas...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error && !loading) {
+    <div class="error-container">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <p>{{ error }}</p>
+      <button class="btn-retry" (click)="cargarEstadisticas()">Reintentar</button>
+    </div>
+  }
+
+  <!-- Content -->
+  @if (!loading && !error) {
+    <!-- Summary cards -->
+    <div class="summary-row">
+      <div class="summary-card">
+        <i class="bi bi-cpu"></i>
+        <div class="summary-data">
+          <span class="summary-number">{{ dispositivos.length }}</span>
+          <span class="summary-label">Total dispositivos</span>
+        </div>
+      </div>
+      <div class="summary-card card-danger">
+        <i class="bi bi-arrow-down-circle-fill"></i>
+        <div class="summary-data">
+          <span class="summary-number">{{ totalDesconexiones }}</span>
+          <span class="summary-label">Desconexiones</span>
+        </div>
+      </div>
+      <div class="summary-card card-success">
+        <i class="bi bi-arrow-up-circle-fill"></i>
+        <div class="summary-data">
+          <span class="summary-number">{{ totalReconexiones }}</span>
+          <span class="summary-label">Reconexiones</span>
+        </div>
+      </div>
+      <div class="summary-card card-warning">
+        <i class="bi bi-arrow-repeat"></i>
+        <div class="summary-data">
+          <span class="summary-number">{{ totalReemplazos }}</span>
+          <span class="summary-label">Reemplazos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dispositivos activos -->
+    @if (dispositivosActivos.length > 0) {
+      <div class="section-title">Dispositivos activos</div>
+      <div class="devices-table">
+        @for (d of dispositivosActivos; track d.id) {
+          <div class="device-row" [class.selected]="selectedSerial === d.numero_serial" [class.online]="d.online" (click)="verEventos(d.numero_serial)">
+            <div class="row-status">
+              <span class="status-dot" [class.on]="d.online"></span>
+            </div>
+            <div class="row-icon">
+              <i class="bi" [ngClass]="getTipoIcon(d.tipo_dispositivo)"></i>
+            </div>
+            <div class="row-info">
+              <span class="row-type">{{ getTipoLabel(d.tipo_dispositivo) }}</span>
+              <span class="row-room">
+                @if (d.habitacion_id !== null && d.habitacion_id !== undefined) {
+                  Hab. {{ d.habitacion_id }}
+                } @else {
+                  Sin asignar
+                }
+              </span>
+            </div>
+            <div class="row-serial">{{ d.numero_serial }}</div>
+            <div class="row-stats">
+              <span class="stat-item stat-danger" title="Desconexiones">
+                <i class="bi bi-arrow-down-circle"></i> {{ d.total_desconexiones }}
+              </span>
+              <span class="stat-item stat-success" title="Reconexiones">
+                <i class="bi bi-arrow-up-circle"></i> {{ d.total_reconexiones }}
+              </span>
+              @if (d.total_reemplazos > 0) {
+                <span class="stat-item stat-warning" title="Reemplazos">
+                  <i class="bi bi-arrow-repeat"></i> {{ d.total_reemplazos }}
+                </span>
+              }
+            </div>
+            <div class="row-last-event">
+              @if (d.ultimo_evento_fecha) {
+                <span class="event-badge" [ngClass]="'event-' + d.ultimo_evento_tipo">
+                  {{ getEventoLabel(d.ultimo_evento_tipo || '') }}
+                </span>
+                <span class="event-time">{{ formatFechaCorta(d.ultimo_evento_fecha) }}</span>
+              } @else {
+                <span class="dim">Sin eventos</span>
+              }
+            </div>
+            <div class="row-expand">
+              <i class="bi" [ngClass]="selectedSerial === d.numero_serial ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+            </div>
+          </div>
+
+          <!-- Event detail panel -->
+          @if (selectedSerial === d.numero_serial) {
+            <div class="events-panel">
+              @if (loadingEventos) {
+                <div class="events-loading">
+                  <div class="spinner-sm"></div>
+                  Cargando eventos...
+                </div>
+              } @else if (eventos.length === 0) {
+                <div class="events-empty">Sin eventos en este periodo</div>
+              } @else {
+                <div class="events-list">
+                  @for (e of eventos; track e.id) {
+                    <div class="event-item" [ngClass]="'event-' + e.tipo_evento">
+                      <div class="event-icon-col">
+                        <i class="bi" [ngClass]="getEventoIcon(e.tipo_evento)"></i>
+                      </div>
+                      <div class="event-info-col">
+                        <span class="event-label">{{ getEventoLabel(e.tipo_evento) }}</span>
+                        <span class="event-date">{{ formatFecha(e.fecha) }}</span>
+                      </div>
+                      <div class="event-detail-col">
+                        @if (e.detalles?.ip) {
+                          <span class="detail-tag">IP: {{ e.detalles.ip }}</span>
+                        }
+                        @if (e.detalles?.rssi) {
+                          <span class="detail-tag">RSSI: {{ e.detalles.rssi }}dBm</span>
+                        }
+                        @if (e.detalles?.reemplazado_por) {
+                          <span class="detail-tag">Nuevo: {{ e.detalles.reemplazado_por }}</span>
+                        }
+                        @if (e.detalles?.offline_desde && e.detalles.offline_desde !== 'nunca') {
+                          <span class="detail-tag">Offline desde: {{ formatFechaCorta(e.detalles.offline_desde) }}</span>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        }
+      </div>
+    }
+
+    <!-- Dispositivos inactivos/reemplazados -->
+    @if (dispositivosInactivos.length > 0) {
+      <div class="section-title section-inactive">Dispositivos inactivos / reemplazados</div>
+      <div class="devices-table inactive">
+        @for (d of dispositivosInactivos; track d.id) {
+          <div class="device-row inactive-row" [class.selected]="selectedSerial === d.numero_serial" (click)="verEventos(d.numero_serial)">
+            <div class="row-status">
+              <span class="status-dot"></span>
+            </div>
+            <div class="row-icon">
+              <i class="bi" [ngClass]="getTipoIcon(d.tipo_dispositivo)"></i>
+            </div>
+            <div class="row-info">
+              <span class="row-type">{{ getTipoLabel(d.tipo_dispositivo) }}</span>
+              <span class="row-room">
+                @if (d.habitacion_id !== null && d.habitacion_id !== undefined) {
+                  Hab. {{ d.habitacion_id }}
+                } @else {
+                  Sin asignar
+                }
+              </span>
+            </div>
+            <div class="row-serial">{{ d.numero_serial }}</div>
+            <div class="row-stats">
+              <span class="stat-item stat-danger">
+                <i class="bi bi-arrow-down-circle"></i> {{ d.total_desconexiones }}
+              </span>
+              @if (d.total_reemplazos > 0) {
+                <span class="stat-item stat-warning">
+                  <i class="bi bi-arrow-repeat"></i> {{ d.total_reemplazos }}
+                </span>
+              }
+            </div>
+            <div class="row-last-event">
+              @if (d.ultimo_evento_fecha) {
+                <span class="event-badge" [ngClass]="'event-' + d.ultimo_evento_tipo">
+                  {{ getEventoLabel(d.ultimo_evento_tipo || '') }}
+                </span>
+                <span class="event-time">{{ formatFechaCorta(d.ultimo_evento_fecha) }}</span>
+              }
+            </div>
+            <div class="row-expand">
+              <i class="bi" [ngClass]="selectedSerial === d.numero_serial ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+            </div>
+          </div>
+
+          @if (selectedSerial === d.numero_serial) {
+            <div class="events-panel">
+              @if (loadingEventos) {
+                <div class="events-loading">
+                  <div class="spinner-sm"></div>
+                  Cargando eventos...
+                </div>
+              } @else if (eventos.length === 0) {
+                <div class="events-empty">Sin eventos en este periodo</div>
+              } @else {
+                <div class="events-list">
+                  @for (e of eventos; track e.id) {
+                    <div class="event-item" [ngClass]="'event-' + e.tipo_evento">
+                      <div class="event-icon-col">
+                        <i class="bi" [ngClass]="getEventoIcon(e.tipo_evento)"></i>
+                      </div>
+                      <div class="event-info-col">
+                        <span class="event-label">{{ getEventoLabel(e.tipo_evento) }}</span>
+                        <span class="event-date">{{ formatFecha(e.fecha) }}</span>
+                      </div>
+                      <div class="event-detail-col">
+                        @if (e.detalles?.ip) {
+                          <span class="detail-tag">IP: {{ e.detalles.ip }}</span>
+                        }
+                        @if (e.detalles?.reemplazado_por) {
+                          <span class="detail-tag">Nuevo: {{ e.detalles.reemplazado_por }}</span>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        }
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (dispositivos.length === 0) {
+      <div class="empty-state">
+        <i class="bi bi-bar-chart-line"></i>
+        <p>No hay datos de dispositivos</p>
+      </div>
+    }
+  }
+</div>

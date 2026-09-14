@@ -1,0 +1,150 @@
+# Todas las variables ${...} vienen del archivo .env de la raiz del repo.
+# Copiar .env.example a .env y ajustar antes del primer despliegue.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: enfermeras-postgres
+    restart: unless-stopped
+    # Expuesto en toda la red (0.0.0.0) para permitir DBeaver/pgAdmin desde la LAN.
+    # Puerto 15432 en el host -> 5432 dentro del contenedor.
+    # Para restringir a solo el host local, cambia 0.0.0.0 por 127.0.0.1.
+    # Para no exponerlo, comenta las dos lineas siguientes (backend sigue funcionando).
+    ports:
+      - "${POSTGRES_HOST_PORT:-15432}:5432"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - enfermeras-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  db-migrate:
+    image: postgres:16-alpine
+    container_name: enfermeras-db-migrate
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGUSER=${POSTGRES_USER}
+      - PGPASSWORD=${POSTGRES_PASSWORD}
+      - PGDATABASE=${POSTGRES_DB}
+    volumes:
+      - ./database/migrations:/migrations:ro
+      - ./database/migrate.sh:/migrate.sh:ro
+    entrypoint: ["/bin/sh", "/migrate.sh"]
+    networks:
+      - enfermeras-network
+
+  mosquitto:
+    build:
+      context: ./mosquitto
+      dockerfile: Dockerfile
+    container_name: enfermeras-mosquitto
+    restart: unless-stopped
+    ports:
+      - "${MQTT_PORT:-1883}:1883"
+    environment:
+      # El entrypoint genera password.txt en cada arranque con estos valores.
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
+    volumes:
+      - mosquitto-data:/mosquitto/data
+    networks:
+      - enfermeras-network
+    healthcheck:
+      test: ["CMD", "mosquitto_sub", "-h", "localhost", "-u", "${MQTT_USER}", "-P", "${MQTT_PASSWORD}", "-t", "$$SYS/broker/uptime", "-C", "1", "-W", "3"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: enfermeras-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-4000}:4000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=4000
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-24h}
+      - PGUSER=${POSTGRES_USER}
+      - PGHOST=postgres
+      - PGDATABASE=${POSTGRES_DB}
+      - PGPASSWORD=${POSTGRES_PASSWORD}
+      - PGPORT=5432
+      - API_ESSI=${API_ESSI}
+      - SYNC_INTERVAL_MINUTES=${SYNC_INTERVAL_MINUTES:-5}
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-900000}
+      - RATE_LIMIT_MAX=${RATE_LIMIT_MAX:-1000}
+      - MQTT_HOST=mosquitto
+      - MQTT_PORT=1883
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
+    volumes:
+      - firmwares-data:/app/firmwares
+      - audio-data:/app/uploads/audio
+    depends_on:
+      postgres:
+        condition: service_healthy
+      db-migrate:
+        condition: service_completed_successfully
+      mosquitto:
+        condition: service_started
+    networks:
+      - enfermeras-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: enfermeras-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    depends_on:
+      - backend
+    networks:
+      - enfermeras-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  enfermeras-network:
+    driver: bridge
+    # Subred fija. En un servidor con muchos stacks, Docker agota sus rangos por
+    # defecto (172.17-172.31 y 192.168.x) y falla al crear la red con:
+    #   "all predefined address pools have been fully subnetted"
+    # Fijarla aqui evita depender de esos rangos y NO obliga a reiniciar Docker
+    # (reiniciarlo tumbaria todos los demas stacks del servidor).
+    # Si 10.251.0.0/24 ya estuviera ocupada, cambia DOCKER_SUBNET en el .env.
+    ipam:
+      config:
+        - subnet: ${DOCKER_SUBNET:-10.251.0.0/24}
+
+volumes:
+  firmwares-data:
+  audio-data:
+  mosquitto-data:
+  pgdata:

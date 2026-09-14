@@ -1,0 +1,85 @@
+<div class="nueva_nota">
+  <div class="title_close">
+    <span>Agregar Nota</span>
+  </div>
+  <div class="vector_2"></div>
+
+  <div class="content">
+    <!-- Selector de Habitación -->
+    <div class="cama_input">
+      <label>Seleccione Habitaci&oacute;n</label>
+      <select class="select_cama" [(ngModel)]="habitacionSeleccionada" (ngModelChange)="camaHabitacion($event)">
+        <option class="text_select" [ngValue]="null" disabled selected>
+          Seleccione
+        </option>
+        @for (habitacion of lstHabitaciones; track habitacion.nombre) {
+          <option [ngValue]="habitacion">{{ habitacion.nombre }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Lista de camas cuando se selecciona habitación -->
+    @if (habitacionSeleccionada && lstDatos.length > 0) {
+      <div class="beds-list">
+        @for (cama of lstDatos; track cama.id) {
+          <div class="bed-card">
+            <!-- Info del paciente -->
+            <div class="bed-header">
+              <span class="bed-letter">{{ cama.nombre }}</span>
+              <span class="bed-patient">{{ cama.paciente || 'Sin paciente' }}</span>
+            </div>
+
+            <!-- Chips de notas rápidas -->
+            <div class="note-chips">
+              @for (chip of notaChips; track chip.code) {
+                <button class="chip"
+                  [class.chip-active]="isChipActive(cama.id!, chip.code)"
+                  [style.--chip-color]="chip.color"
+                  (click)="selectChip(cama.id!, chip.code)">
+                  <i [class]="chip.icon"></i>
+                  {{ chip.code }}
+                </button>
+              }
+            </div>
+
+            <!-- Inputs de nota y hora -->
+            <div class="note-inputs">
+              <div class="input-group">
+                <label>Nota</label>
+                <input type="text"
+                  class="nota-field"
+                  [value]="getNotaValue(cama.id!) || cama.nota || ''"
+                  maxlength="50"
+                  placeholder="Texto libre o chips"
+                  (input)="onNotaInput(cama.id!, $event)" />
+              </div>
+              <div class="input-group">
+                <label>Hora</label>
+                <input type="time"
+                  class="hora-field"
+                  [value]="getHoraValue(cama.id!) || convertir(cama.fecha_nota) || ''"
+                  (input)="onHoraInput(cama.id!, $event)" />
+              </div>
+              <div class="input-group input-group-action">
+                <label>&nbsp;</label>
+                <button class="btn-clear" (click)="limpiarNota(cama.id!)" title="Limpiar nota">
+                  <i class="bi bi-trash-fill"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="line4"></div>
+
+  <!-- Botones -->
+  <div class="btn_group">
+    <button class="primary" (click)="salir(true)">Cancelar</button>
+    <div class="secundary">
+      <button (click)="guardar()" [disabled]="!habitacionSeleccionada">Guardar</button>
+    </div>
+  </div>
+</div>

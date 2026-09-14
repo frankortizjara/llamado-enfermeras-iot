@@ -1,0 +1,138 @@
+<div class="tv-display" [style.--tv-font-scale]="escalaFuente / 100">
+  <!-- Error -->
+  @if (errorMsg) {
+    <div class="tv-error">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <span>{{ errorMsg }}</span>
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (loading && !errorMsg) {
+    <div class="tv-loading">
+      <span>Cargando habitaciones...</span>
+    </div>
+  }
+
+  <!-- Content -->
+  @if (!loading && !errorMsg) {
+    <!-- Barra superior mínima -->
+    <div class="tv-header">
+      <div class="tv-header-left">
+        <img src="assets/icons/isotipo_essalud_blanco.svg" alt="logo" class="tv-logo" />
+        <span class="tv-title">Asistencia de Camas</span>
+      </div>
+      <div class="tv-header-center">
+        <span class="tv-area">{{ areaNombre }}</span>
+      </div>
+      <div class="tv-header-right">
+        @if (ultimaSincronizacion) {
+          <span class="tv-sync">Sincronizado: {{ ultimaSincronizacion }}</span>
+        }
+      </div>
+    </div>
+
+    <!-- Banner de avisos permanentes (debajo del header) -->
+    <app-tv-overlay [contenido]="contenidoOverlay" [avisosPermanentes]="avisosPermanentes" [duracionOverlay]="duracionOverlay" />
+
+    <!-- Grid de habitaciones -->
+    <div
+      class="tv-grid"
+      [style.--tv-cols]="gridCols"
+      [style.--tv-rows]="gridRows"
+    >
+      @for (habitacion of lstHabitaciones; track habitacion.nombre) {
+        <div
+          class="tv-habitacion"
+          [class.habitacion-alerta]="tieneAlertaSimple(habitacion.nombre) && !esSoloAlertaBano(habitacion.nombre)"
+          [class.habitacion-alerta-bano]="tieneAlertaSimple(habitacion.nombre) && esSoloAlertaBano(habitacion.nombre)"
+        >
+          <div
+            class="tv-numero"
+            [class.numero-alerta]="tieneAlertaSimple(habitacion.nombre) && !esSoloAlertaBano(habitacion.nombre)"
+            [class.numero-alerta-bano]="tieneAlertaSimple(habitacion.nombre) && esSoloAlertaBano(habitacion.nombre)"
+          >
+            <p>{{ habitacion.nombre }}</p>
+          </div>
+
+          <div class="tv-camas">
+            @for (cama of habitacion.camas; track cama.id) {
+              <div
+                class="tv-cama"
+                [class.cama-alerta]="camaEnAlerta(habitacion.nombre, cama.nombre)"
+                [class.cama-bano]="cama.paciente === 'Baño' && camaEnAlerta(habitacion.nombre, cama.nombre)"
+              >
+                <p class="tv-letra" [class.letra-alerta]="camaEnAlerta(habitacion.nombre, cama.nombre)">
+                  {{ cama.nombre }}
+                </p>
+                @if (cama.nombre && cama.nombre.length > 0) {
+                  <div class="tv-line" [class.line-alerta]="camaEnAlerta(habitacion.nombre, cama.nombre)"></div>
+                }
+                <div class="tv-paciente-info">
+                  <p class="tv-nombre" [class.nombre-alerta]="camaEnAlerta(habitacion.nombre, cama.nombre)">
+                    {{ getNombreApellido(cama.paciente || '') }}
+                  </p>
+                  @if (cama.nota) {
+                    <div class="nota-badge" [style.background]="getNotaColor(cama.nota)">
+                      <i [class]="getNotaIcon(cama.nota)"></i>
+                      <span class="nota-text">{{ cama.nota }}</span>
+                      @if (cama.fecha_nota) {
+                        <span class="nota-time">{{ formatNotaHora(cama.fecha_nota) }}</span>
+                        <span class="nota-date">{{ formatNotaFecha(cama.fecha_nota) }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+                <img
+                  class="tv-icon"
+                  [src]="camaEnAlerta(habitacion.nombre, cama.nombre)
+                    ? (cama.paciente === 'Baño' ? 'assets/icons/icono-baño.svg' : 'assets/icons/icono-alarma.svg')
+                    : 'assets/icons/icono-cama.svg'"
+                  alt="icono-cama"
+                />
+              </div>
+            }
+
+            <!-- Indicador de alerta de baño -->
+            @if (tieneAlertaBano(habitacion.nombre)) {
+              <div class="tv-bano-alerta">
+                <img src="assets/icons/icono-baño.svg" alt="baño" class="tv-bano-icon" />
+                <span>Baño</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Overlay de emergencia (prioridad máxima, z-index mayor) -->
+    @for (alerta of lstAlerta; track alerta.nombre) {
+      @if (alerta.estado == 2) {
+        <div class="emergencia-overlay" [class.emergencia-overlay-bano]="esEmergenciaBano(alerta)">
+          <div class="emergencia-popup">
+            <div class="emergencia-titulo" [class.emergencia-titulo-bano]="esEmergenciaBano(alerta)">
+              EMERGENCIA
+            </div>
+            <div class="emergencia-cuarto">
+              <span class="emergencia-label">HABITACI&Oacute;N</span>
+              <span class="emergencia-numero">{{ alerta.nombre }}</span>
+            </div>
+            <div class="emergencia-pacientes">
+              @for (cama of alerta.camas; track cama.id) {
+                <div class="emergencia-cama" [class.emergencia-cama-bano]="cama.paciente === 'Baño'">
+                  @if (cama.paciente === 'Baño') {
+                    <img src="assets/icons/icono-baño.svg" alt="baño" class="emergencia-bano-icon" />
+                    <span class="emergencia-cama-paciente">Baño</span>
+                  } @else {
+                    <span class="emergencia-cama-letra">{{ cama.nombre }}</span>
+                    <span class="emergencia-cama-paciente">{{ getPacienteDeAlerta(alerta.nombre, cama.nombre) }}</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    }
+  }
+</div>

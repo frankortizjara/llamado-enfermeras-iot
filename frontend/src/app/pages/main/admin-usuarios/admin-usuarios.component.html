@@ -1,0 +1,360 @@
+<div class="admin-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="irAPrincipal()">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <h1>{{ esAdmin ? 'Administrar Usuarios' : 'Mi Perfil' }}</h1>
+      @if (esAdmin) {
+        <button class="btn-refresh" (click)="cargarUsuarios()" [disabled]="loading">
+          <i class="bi bi-arrow-clockwise" [class.spinning]="loading"></i>
+        </button>
+      }
+    </div>
+    <div class="header-right">
+      <button class="btn-mi-clave" (click)="abrirCambiarMiClave()">
+        <i class="bi bi-key-fill"></i>
+        <span class="btn-text">Mi Clave</span>
+      </button>
+      @if (esAdmin) {
+        <button class="btn-crear" (click)="abrirCrear()">
+          <i class="bi bi-person-plus-fill"></i>
+          <span class="btn-text">Nuevo Usuario</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- ============== VISTA: LISTA USUARIOS ============== -->
+  @if (viewMode === 'usuarios') {
+    @if (loading) {
+      <div class="loading-container">
+        <div class="spinner"></div>
+        <p>Cargando usuarios...</p>
+      </div>
+    }
+
+    @if (!loading && usuarios.length === 0) {
+      <div class="empty-state">
+        <i class="bi bi-people"></i>
+        <p>No hay usuarios registrados</p>
+      </div>
+    }
+
+    @if (!loading && usuarios.length > 0) {
+      <div class="usuarios-grid">
+        @for (user of usuarios; track user.id) {
+          <div class="user-card" [class.inactive]="!user.estado">
+            <div class="user-card-header">
+              <div class="user-avatar">
+                <i class="bi bi-person-fill"></i>
+              </div>
+              <div class="user-info">
+                <span class="user-name">{{ user.nombre }}</span>
+                <span class="user-username">{{ user.usuario }}</span>
+              </div>
+              <span class="rol-badge" [ngClass]="getRolClass(user.rol)">
+                {{ getRolLabel(user.rol) }}
+              </span>
+            </div>
+            <div class="user-card-body">
+              <div class="user-detail">
+                <i class="bi bi-hospital"></i>
+                <span>{{ user.area_nombre || 'Sin area asignada' }}</span>
+              </div>
+              @if (user.permisos?.config_essi?.servicio) {
+                <div class="user-detail">
+                  <i class="bi bi-geo-alt"></i>
+                  <span>{{ user.permisos.config_essi!.servicio }}</span>
+                </div>
+              }
+              @if (user.permisos?.config_essi?.codHabCama) {
+                <div class="user-detail">
+                  <i class="bi bi-building"></i>
+                  <span>Sub-area: {{ user.permisos.config_essi!.codHabCama }}</span>
+                </div>
+              }
+              <div class="user-detail">
+                <i class="bi bi-circle-fill" [class.active]="user.estado" [class.inactive]="!user.estado"></i>
+                <span>{{ user.estado ? 'Activo' : 'Inactivo' }}</span>
+              </div>
+            </div>
+            <div class="user-card-actions">
+              <button class="btn-action btn-edit" (click)="abrirEditar(user)" title="Editar">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button class="btn-action btn-key" (click)="abrirCambiarClave(user)" title="Cambiar clave">
+                <i class="bi bi-key-fill"></i>
+              </button>
+              @if (user.id !== currentUser?.id) {
+                <button class="btn-action btn-delete" (click)="confirmarEliminar(user)" title="Eliminar">
+                  <i class="bi bi-trash-fill"></i>
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- ============== VISTA: CREAR / EDITAR USUARIO ============== -->
+  @if (viewMode === 'crear') {
+    <div class="form-container">
+      <div class="form-card">
+        <div class="form-title">
+          <i class="bi" [ngClass]="editMode ? 'bi-pencil-square' : 'bi-person-plus-fill'"></i>
+          <span>{{ editMode ? 'Editar Usuario' : 'Nuevo Usuario' }}</span>
+        </div>
+
+        <div class="form-body">
+          <div class="form-group">
+            <label>Nombre completo</label>
+            <input type="text" [(ngModel)]="formNombre" placeholder="Nombre del usuario" maxlength="255" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label>Usuario (login)</label>
+            <input type="text" [(ngModel)]="formUsuario" placeholder="Nombre de usuario" maxlength="255" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label>{{ editMode ? 'Nueva Clave (dejar vacio para mantener)' : 'Clave' }}</label>
+            <input type="password" [(ngModel)]="formClave" placeholder="Minimo 6 caracteres" maxlength="255" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label>Rol</label>
+            <select [(ngModel)]="formRol" (ngModelChange)="onRolChange()" class="form-input">
+              @for (rol of ROLES; track rol.value) {
+                <option [value]="rol.value">{{ rol.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-divider">
+            <span>Permisos de Acceso</span>
+          </div>
+
+          <div class="permisos-grid">
+            <div class="permiso-group">
+              <label class="check-label">
+                <input type="checkbox" [(ngModel)]="formPermisos.dispositivos">
+                <span><i class="bi bi-cpu-fill"></i> Dispositivos</span>
+              </label>
+            </div>
+            <div class="permiso-group">
+              <label class="check-label">
+                <input type="checkbox" [(ngModel)]="formPermisos.analytics">
+                <span><i class="bi bi-bar-chart-fill"></i> Analytics</span>
+              </label>
+            </div>
+            <div class="permiso-group">
+              <label class="check-label">
+                <input type="checkbox" [(ngModel)]="formPermisos.usuarios">
+                <span><i class="bi bi-people-fill"></i> Usuarios</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="permisos-section">
+            <label class="check-label permiso-parent">
+              <input type="checkbox" [(ngModel)]="formPermisos.contenido_tv">
+              <span><i class="bi bi-tv"></i> Contenido TV</span>
+            </label>
+
+            @if (formPermisos.contenido_tv) {
+              <div class="permisos-sub">
+                <label class="check-label">
+                  <input type="checkbox" [(ngModel)]="formPermisos.contenido_tv_efemerides">
+                  <span>Efemerides</span>
+                </label>
+                <label class="check-label">
+                  <input type="checkbox" [(ngModel)]="formPermisos.contenido_tv_cumpleanos">
+                  <span>Cumpleanos</span>
+                </label>
+                <label class="check-label">
+                  <input type="checkbox" [(ngModel)]="formPermisos.contenido_tv_avisos">
+                  <span>Avisos</span>
+                </label>
+                <label class="check-label">
+                  <input type="checkbox" [(ngModel)]="formPermisos.contenido_tv_audio">
+                  <span>Audio</span>
+                </label>
+                <label class="check-label">
+                  <input type="checkbox" [(ngModel)]="formPermisos.contenido_tv_config">
+                  <span>Configuracion</span>
+                </label>
+              </div>
+            }
+          </div>
+
+          <div class="form-divider">
+            <span>Area Hospitalaria</span>
+          </div>
+
+          <div class="form-group">
+            <label>Servicio</label>
+            <select [(ngModel)]="formServicio" (ngModelChange)="onServicioChange()" class="form-input">
+              <option value="">-- Seleccionar servicio --</option>
+              @for (srv of serviciosUnicos; track srv) {
+                <option [value]="srv">{{ srv }}</option>
+              }
+            </select>
+          </div>
+
+          @if (estacionesFiltradas.length > 0) {
+            <div class="form-group">
+              <label>Estacion de Enfermeria</label>
+              <select [(ngModel)]="formEstacion" class="form-input">
+                <option value="">-- Seleccionar estacion --</option>
+                @for (est of estacionesFiltradas; track est.est_enf_cod) {
+                  <option [value]="est.est_enf_cod">{{ est.estacion }} ({{ est.est_enf_cod }})</option>
+                }
+              </select>
+            </div>
+          }
+
+          @if (formServicio && formEstacion) {
+            <div class="area-preview">
+              <span class="preview-label">Codigo EsSi:</span>
+              <code>{{ getCodigoEsSi() | json }}</code>
+            </div>
+
+            <div class="form-group">
+              <div class="sub-area-header">
+                <label>Sub-Area (codHabCama)</label>
+                <button class="btn-probar" type="button" (click)="probarSubAreas()" [disabled]="probandoSubAreas">
+                  @if (probandoSubAreas) {
+                    <span class="spinner-sm"></span> Consultando...
+                  } @else {
+                    <i class="bi bi-search"></i> Probar
+                  }
+                </button>
+              </div>
+
+              @if (subAreas.length > 0) {
+                <select [(ngModel)]="formCodHabCama" class="form-input">
+                  <option value="">-- Seleccionar sub-area --</option>
+                  @for (sa of subAreas; track sa.codHabCama) {
+                    <option [value]="sa.codHabCama">{{ sa.codHabCama }} - {{ sa.desSerCama }} ({{ sa.totalCamas }} camas)</option>
+                  }
+                </select>
+              } @else if (formCodHabCama) {
+                <input type="text" [(ngModel)]="formCodHabCama" class="form-input" placeholder="codHabCama guardado" readonly>
+              } @else {
+                <input type="text" [(ngModel)]="formCodHabCama" class="form-input" placeholder="Presione Probar o ingrese manualmente">
+              }
+            </div>
+
+            @if (formCodHabCama) {
+              <div class="area-preview area-preview-ok">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>Sub-area seleccionada: <strong>{{ formCodHabCama }}</strong></span>
+              </div>
+            }
+          }
+
+          <div class="form-group form-check">
+            <label class="check-label">
+              <input type="checkbox" [(ngModel)]="formEstado">
+              <span>Usuario activo</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-cancel" (click)="setView('usuarios')">Cancelar</button>
+          <button class="btn-save" (click)="guardarUsuario()" [disabled]="guardando">
+            @if (guardando) {
+              <span class="spinner-sm"></span> Guardando...
+            } @else {
+              <i class="bi bi-check-lg"></i> {{ editMode ? 'Actualizar' : 'Crear Usuario' }}
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============== VISTA: CAMBIAR CLAVE (ADMIN) ============== -->
+  @if (viewMode === 'cambiar-clave') {
+    <div class="form-container">
+      <div class="form-card">
+        <div class="form-title">
+          <i class="bi bi-key-fill"></i>
+          <span>Cambiar Clave</span>
+        </div>
+
+        <div class="form-body">
+          <div class="user-target">
+            <i class="bi bi-person-fill"></i>
+            <span>{{ selectedUserName }}</span>
+          </div>
+
+          <div class="form-group">
+            <label>Nueva clave</label>
+            <input type="password" [(ngModel)]="nuevaClave" placeholder="Minimo 6 caracteres" maxlength="255" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label>Confirmar clave</label>
+            <input type="password" [(ngModel)]="confirmarClave" placeholder="Repetir la clave" maxlength="255" class="form-input">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-cancel" (click)="setView('usuarios')">Cancelar</button>
+          <button class="btn-save" (click)="cambiarClave()" [disabled]="cambiandoClave">
+            @if (cambiandoClave) {
+              <span class="spinner-sm"></span> Cambiando...
+            } @else {
+              <i class="bi bi-check-lg"></i> Cambiar Clave
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============== VISTA: CAMBIAR MI CLAVE ============== -->
+  @if (viewMode === 'mi-clave') {
+    <div class="form-container">
+      <div class="form-card">
+        <div class="form-title">
+          <i class="bi bi-shield-lock-fill"></i>
+          <span>Cambiar Mi Clave</span>
+        </div>
+
+        <div class="form-body">
+          <div class="form-group">
+            <label>Clave actual</label>
+            <input type="password" [(ngModel)]="miClaveActual" placeholder="Ingrese su clave actual" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label>Nueva clave</label>
+            <input type="password" [(ngModel)]="miClaveNueva" placeholder="Minimo 6 caracteres" maxlength="255" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label>Confirmar nueva clave</label>
+            <input type="password" [(ngModel)]="miClaveConfirmar" placeholder="Repetir la nueva clave" maxlength="255" class="form-input">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-cancel" (click)="esAdmin ? setView('usuarios') : irAPrincipal()">Cancelar</button>
+          <button class="btn-save" (click)="cambiarMiClave()" [disabled]="cambiandoMiClave">
+            @if (cambiandoMiClave) {
+              <span class="spinner-sm"></span> Cambiando...
+            } @else {
+              <i class="bi bi-check-lg"></i> Actualizar Mi Clave
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

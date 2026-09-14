@@ -1,29 +1,43 @@
 # Firmware
 
-Firmware de los ESP32, en C++ sobre el core de Arduino.
+**Un solo firmware para los tres tipos de dispositivo.** El tipo se elige desde la
+interfaz web del propio ESP32 y se guarda en NVS; cada uno usa solo los pines y las
+funciones que necesita.
 
-| Carpeta | Dispositivo |
+| Tipo | Dónde va | Qué hace |
+|---|---|---|
+| `cuarto` | Junto a la cama | Recibe el pulsador, avisa por ESP-NOW y publica por MQTT |
+| `banio` | En el baño | Igual, y es donde sale el 40 % de los llamados |
+| `luz` | Sobre la puerta, en el pasillo | Acciona el relé del indicador luminoso |
+
+Sin configurar arranca en **modo selector**: levanta su propio punto de acceso para
+que el técnico lo configure desde un teléfono, sin reflashear y sin un portátil con
+el IDE.
+
+| Archivo | Qué contiene |
 |---|---|
-| `cuarto/` | ESP32 de la habitación. Recibe la llamada por ESP-NOW, acciona el relay de la luz, publica el evento por MQTT y sirve su propia interfaz de configuración. |
-| `luces-pasillo/` | ESP32 del indicador luminoso del pasillo. |
+| `firmware_unificado.ino` | Arranque, bucle principal, ESP-NOW y MQTT |
+| `config.ino` | Servidor web de configuración |
+| `web_pages.h` | La interfaz embebida, servida desde el propio dispositivo |
+| `nvs.ino` | Persistencia de la configuración |
+| `ota.ino` | Actualización de firmware por aire |
+| `data.h` | Estado global y mapa de pines |
 
-## Cómo está organizado cada uno
+## Por qué un firmware y no tres
 
-- `main__*.ino` — arranque, bucle principal, ESP-NOW y MQTT
-- `config.ino` — servidor web embebido de configuración
-- `data.h` — estado global y declaraciones
+Tres firmwares significan tres binarios que mantener, tres versiones que se
+desincronizan y un técnico que tiene que saber cuál grabar en cada caja. Con uno
+solo, el almacén tiene un único dispositivo, la actualización por aire alcanza a
+todos a la vez, y un equipo que falla se reemplaza por cualquier otro
+reconfigurándolo en sitio.
+
+Cuesta algo de memoria y algún `if` de más. Vale la pena.
 
 ## Configuración
 
-**Ninguna credencial está en el código.** Red, dirección del dispositivo y
-emparejamiento se configuran en sitio desde la interfaz web que sirve el propio
-ESP32, y se guardan en NVS. En el primer arranque el dispositivo levanta un punto de
-acceso propio para poder configurarlo desde un teléfono.
-
-Eso es deliberado: en una instalación hospitalaria el técnico llega con un móvil, no
-con un portátil y el IDE de Arduino.
+**Ninguna credencial está en el código.** Red, tipo de dispositivo, dirección y
+emparejamiento se configuran desde la interfaz web y viven en NVS.
 
 ## Dependencias
 
-Core ESP32 para Arduino, `PubSubClient` (MQTT), `ESPAsyncWebServer` y LittleFS para
-la interfaz embebida.
+Core ESP32 para Arduino, `PubSubClient` (MQTT), `ESPAsyncWebServer` y `Preferences`.

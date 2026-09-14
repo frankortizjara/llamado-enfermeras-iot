@@ -1,0 +1,419 @@
+<div class="dispositivos-container">
+  <!-- Header compacto -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="irAPrincipal()">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <h1>Dispositivos ESP32</h1>
+      @if (ultimaActualizacion) {
+        <span class="last-update">{{ ultimaActualizacion }}</span>
+      }
+      <button class="btn-refresh" (click)="cargarDatos()" [disabled]="loading">
+        <i class="bi bi-arrow-clockwise" [class.spinning]="loading"></i>
+      </button>
+      <button class="btn-stats" (click)="irAEstadisticas()" title="Estadísticas">
+        <i class="bi bi-bar-chart-line"></i>
+      </button>
+      <button class="btn-purgar-disp" (click)="purgarDispositivos()" [disabled]="purgandoDispositivos || loading" title="Eliminar todos los dispositivos registrados">
+        <i class="bi" [ngClass]="purgandoDispositivos ? 'bi-hourglass-split' : 'bi-trash3'"></i>
+      </button>
+    </div>
+    <div class="header-right">
+      <!-- Stats compactos -->
+      <div class="stats-inline">
+        <div class="stat-badge">
+          <span class="stat-number">{{ dispositivos.length }}</span>
+          <span class="stat-label">Total</span>
+        </div>
+        <div class="stat-badge stat-online">
+          <span class="stat-number">{{ dispositivosOnline }}</span>
+          <span class="stat-label">Online</span>
+        </div>
+        <div class="stat-badge stat-offline">
+          <span class="stat-number">{{ dispositivosOffline }}</span>
+          <span class="stat-label">Offline</span>
+        </div>
+        @if (habitaciones.length > 0) {
+          <div class="stat-badge">
+            <span class="stat-number">{{ habitaciones.length }}</span>
+            <span class="stat-label">Hab.</span>
+          </div>
+        }
+      </div>
+
+      <!-- View mode toggle -->
+      <div class="view-toggle">
+        @if (habitaciones.length > 0) {
+          <button class="toggle-btn" [class.active]="viewMode === 'rooms'" (click)="setViewMode('rooms')" title="Vista por habitaciones">
+            <i class="bi bi-grid-3x3-gap"></i>
+          </button>
+          <button class="toggle-btn" [class.active]="viewMode === 'all'" (click)="setViewMode('all')" title="Vista lista">
+            <i class="bi bi-list-ul"></i>
+          </button>
+        }
+        <button class="toggle-btn" [class.active]="viewMode === 'rf'" (click)="setViewMode('rf')" title="Controles RF">
+          <i class="bi bi-broadcast-pin"></i>
+        </button>
+        <button class="toggle-btn" [class.active]="viewMode === 'firmware'" (click)="setViewMode('firmware')" title="Firmware OTA">
+          <i class="bi bi-cloud-arrow-up"></i>
+        </button>
+      </div>
+
+      <!-- Paginación -->
+      @if (totalPages > 1) {
+        <div class="pagination">
+          <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 0">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <span class="page-info">{{ currentPage + 1 }} / {{ totalPages }}</span>
+          <button class="btn-page" (click)="nextPage()" [disabled]="currentPage >= totalPages - 1">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (loading && dispositivos.length === 0) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando dispositivos...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error && dispositivos.length === 0) {
+    <div class="error-container">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <p>{{ error }}</p>
+      <button class="btn-retry" (click)="cargarDatos()">Reintentar</button>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading && !error && dispositivos.length === 0) {
+    <div class="empty-state">
+      <i class="bi bi-cpu"></i>
+      <p>No hay dispositivos registrados</p>
+    </div>
+  }
+
+  <!-- ============== VIEW: ROOMS (grouped by habitación) ============== -->
+  @if (viewMode === 'rooms' && habitaciones.length > 0) {
+    <div class="rooms-grid">
+      @for (room of paginatedRooms; track room.habitacionId) {
+        <div class="room-card" [class.all-online]="room.allOnline" [class.all-offline]="room.allOffline">
+          <div class="room-header">
+            <span class="room-name">Hab. {{ room.habitacionId }}</span>
+            <span class="room-status" [class.online]="room.allOnline" [class.partial]="!room.allOnline && !room.allOffline" [class.offline]="room.allOffline">
+              @if (room.allOnline) {
+                <i class="bi bi-check-circle-fill"></i> OK
+              } @else if (room.allOffline) {
+                <i class="bi bi-x-circle-fill"></i> OFF
+              } @else {
+                <i class="bi bi-exclamation-circle-fill"></i> Parcial
+              }
+            </span>
+          </div>
+          <div class="devices-list">
+            <!-- Cuarto -->
+            <div class="device-slot" [class.online]="room.cuarto?.online" [class.offline]="room.cuarto && !room.cuarto.online" [class.missing]="!room.cuarto">
+              <div class="slot-main">
+                <i class="bi bi-door-open-fill slot-icon"></i>
+                <span class="slot-label">Cuarto</span>
+                <span class="slot-status">
+                  @if (room.cuarto) {
+                    <span class="status-dot" [class.on]="room.cuarto.online"></span>
+                    {{ room.cuarto.online ? 'ON' : 'OFF' }}
+                  } @else {
+                    <span class="status-dot missing"></span> N/A
+                  }
+                </span>
+                @if (room.cuarto) {
+                  <button class="btn-delete-device" (click)="eliminarDispositivo(room.cuarto, $event)" title="Eliminar dispositivo">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                }
+              </div>
+              @if (room.cuarto) {
+                <div class="slot-detail">
+                  <span class="detail-ip">{{ room.cuarto.ip || '-' }}</span>
+                  <span class="detail-mac">{{ room.cuarto.direccion_mac || '-' }}</span>
+                </div>
+              }
+            </div>
+            <!-- Baño -->
+            <div class="device-slot" [class.online]="room.bano?.online" [class.offline]="room.bano && !room.bano.online" [class.missing]="!room.bano">
+              <div class="slot-main">
+                <i class="bi bi-droplet-fill slot-icon"></i>
+                <span class="slot-label">Baño</span>
+                <span class="slot-status">
+                  @if (room.bano) {
+                    <span class="status-dot" [class.on]="room.bano.online"></span>
+                    {{ room.bano.online ? 'ON' : 'OFF' }}
+                  } @else {
+                    <span class="status-dot missing"></span> N/A
+                  }
+                </span>
+                @if (room.bano) {
+                  <button class="btn-delete-device" (click)="eliminarDispositivo(room.bano, $event)" title="Eliminar dispositivo">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                }
+              </div>
+              @if (room.bano) {
+                <div class="slot-detail">
+                  <span class="detail-ip">{{ room.bano.ip || '-' }}</span>
+                  <span class="detail-mac">{{ room.bano.direccion_mac || '-' }}</span>
+                </div>
+              }
+            </div>
+            <!-- Luz -->
+            <div class="device-slot" [class.online]="room.luz?.online" [class.offline]="room.luz && !room.luz.online" [class.missing]="!room.luz">
+              <div class="slot-main">
+                <i class="bi bi-lightbulb-fill slot-icon"></i>
+                <span class="slot-label">Luz</span>
+                <span class="slot-status">
+                  @if (room.luz) {
+                    <span class="status-dot" [class.on]="room.luz.online"></span>
+                    {{ room.luz.online ? 'ON' : 'OFF' }}
+                    @if (room.luz.relay_estado !== undefined && room.luz.relay_estado !== null) {
+                      <span class="relay-badge" [class.relay-on]="room.luz.relay_estado">
+                        {{ room.luz.relay_estado ? 'ENC' : 'APG' }}
+                      </span>
+                    }
+                  } @else {
+                    <span class="status-dot missing"></span> N/A
+                  }
+                </span>
+                @if (room.luz) {
+                  <button class="btn-delete-device" (click)="eliminarDispositivo(room.luz, $event)" title="Eliminar dispositivo">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                }
+              </div>
+              @if (room.luz) {
+                <div class="slot-detail">
+                  <span class="detail-ip">{{ room.luz.ip || '-' }}</span>
+                  <span class="detail-mac">{{ room.luz.direccion_mac || '-' }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ============== VIEW: ALL (flat list of all devices) ============== -->
+  @if (viewMode === 'all' && dispositivos.length > 0) {
+    <div class="devices-flat-grid">
+      @for (d of paginatedDevices; track d.id) {
+        <div class="device-flat-card" [class.online]="d.online" [class.offline]="!d.online">
+          <div class="flat-status">
+            <span class="status-dot" [class.on]="d.online"></span>
+          </div>
+          <div class="flat-icon">
+            <i class="bi" [ngClass]="getTipoIcon(d.tipo_dispositivo)"></i>
+          </div>
+          <div class="flat-info">
+            <span class="flat-type">{{ getTipoLabel(d.tipo_dispositivo) }}</span>
+            <span class="flat-room">
+              @if (d.habitacion_id !== null && d.habitacion_id !== undefined) {
+                Hab. {{ d.habitacion_id }}
+              } @else {
+                Sin asignar
+              }
+            </span>
+          </div>
+          <div class="flat-serial">
+            <span class="serial-text">{{ d.numero_serial | slice:0:12 }}</span>
+          </div>
+          <div class="flat-network">
+            @if (d.ip) {
+              <span class="flat-ip">{{ d.ip }}</span>
+            } @else {
+              <span class="flat-ip dim">-</span>
+            }
+            <span class="flat-mac">{{ d.direccion_mac || '-' }}</span>
+          </div>
+          <div class="flat-signal">
+            @if (d.online && d.rssi) {
+              <span [ngClass]="getRssiClass(d.rssi)">{{ d.rssi }}dBm</span>
+            } @else {
+              <span class="dim">-</span>
+            }
+          </div>
+          <div class="flat-heartbeat">
+            <span class="hb-text">{{ formatHeartbeat(d.ultimo_heartbeat) }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ============== VIEW: RF CONTROLS ============== -->
+  @if (viewMode === 'rf') {
+    <div class="rf-section">
+      <div class="rf-header">
+        <div class="rf-title">
+          <i class="bi bi-broadcast-pin"></i>
+          <span>Controles RF</span>
+          <span class="rf-count">{{ controlesRf.length }}</span>
+        </div>
+        <button class="btn-add-rf" (click)="abrirDialogRf()">
+          <i class="bi bi-plus-lg"></i> Agregar
+        </button>
+      </div>
+
+      @if (loadingRf) {
+        <div class="loading-container">
+          <div class="spinner"></div>
+          <p>Cargando controles RF...</p>
+        </div>
+      }
+
+      @if (!loadingRf && controlesRf.length === 0) {
+        <div class="empty-state">
+          <i class="bi bi-broadcast-pin"></i>
+          <p>No hay controles RF registrados</p>
+          <button class="btn-add-rf" (click)="abrirDialogRf()">
+            <i class="bi bi-plus-lg"></i> Agregar primer control
+          </button>
+        </div>
+      }
+
+      @if (!loadingRf && controlesRf.length > 0) {
+        <div class="rf-grid">
+          @for (ctrl of controlesRf; track ctrl.id) {
+            <div class="rf-card">
+              <div class="rf-card-header">
+                <span class="rf-hab">Hab. {{ ctrl.habitacion_id }}</span>
+                <span class="rf-cama">{{ ctrl.cama === 'Bano' ? 'Bano' : 'Cama ' + ctrl.cama }}</span>
+              </div>
+              <div class="rf-card-dip">
+                <div class="dip-mini">
+                  @for (pos of [0, 1, 2, 3, 4, 5, 6, 7]; track pos) {
+                    <div class="dip-mini-switch" [class.on]="ctrl.dip_config[pos]">
+                      <div class="dip-mini-slider" [class.on]="ctrl.dip_config[pos]"></div>
+                    </div>
+                  }
+                </div>
+                <span class="dip-mini-code">{{ getDipDisplay(ctrl.dip_config) }}</span>
+              </div>
+              @if (ctrl.descripcion) {
+                <div class="rf-card-desc">{{ ctrl.descripcion }}</div>
+              }
+              <div class="rf-card-actions">
+                <button class="btn-edit-rf" (click)="abrirDialogRf(ctrl)" title="Editar">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn-delete-rf" (click)="eliminarControlRf(ctrl)" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ============== VIEW: FIRMWARE OTA ============== -->
+  @if (viewMode === 'firmware') {
+    <div class="fw-section">
+      <div class="fw-header">
+        <div class="fw-title">
+          <i class="bi bi-cloud-arrow-up"></i>
+          <span>Firmware OTA</span>
+          <span class="fw-count">{{ firmwares.length }}</span>
+        </div>
+        <button class="btn-add-rf" (click)="cargarFirmwares()" [disabled]="loadingFw">
+          <i class="bi bi-arrow-clockwise" [class.spinning]="loadingFw"></i> Actualizar
+        </button>
+      </div>
+
+      <!-- Upload form -->
+      <div class="fw-upload-card">
+        <div class="fw-upload-title">
+          <i class="bi bi-upload"></i>
+          Subir nuevo firmware (.bin)
+        </div>
+        <div class="fw-upload-form">
+          <div class="fw-form-row">
+            <div class="fw-form-group">
+              <label>Version</label>
+              <input type="text" [(ngModel)]="fwVersion" placeholder="2.1.0" maxlength="20" class="fw-input">
+            </div>
+            <div class="fw-form-group fw-form-grow">
+              <label>Descripcion (opcional)</label>
+              <input type="text" [(ngModel)]="fwDescripcion" placeholder="Descripcion del cambio" maxlength="500" class="fw-input">
+            </div>
+          </div>
+          <div class="fw-form-row">
+            <label class="fw-file-label" [class.disabled]="subiendoFw">
+              <i class="bi bi-file-earmark-binary"></i>
+              @if (subiendoFw) {
+                <span class="spinner-sm"></span> Subiendo...
+              } @else {
+                Seleccionar .bin y subir
+              }
+              <input type="file" accept=".bin" (change)="subirFirmware($event)" [disabled]="subiendoFw" hidden>
+            </label>
+          </div>
+          <div class="fw-upload-hint">
+            Max 2MB. Formato version: X.X.X
+          </div>
+        </div>
+      </div>
+
+      @if (loadingFw) {
+        <div class="loading-container">
+          <div class="spinner"></div>
+          <p>Cargando firmwares...</p>
+        </div>
+      }
+
+      @if (!loadingFw && firmwares.length === 0) {
+        <div class="empty-state">
+          <i class="bi bi-cloud-arrow-up"></i>
+          <p>No hay firmwares subidos</p>
+        </div>
+      }
+
+      @if (!loadingFw && firmwares.length > 0) {
+        <div class="fw-list">
+          @for (fw of firmwares; track fw.archivo; let i = $index) {
+            <div class="fw-card" [class.fw-latest]="i === 0">
+              <div class="fw-card-main">
+                <div class="fw-version-badge" [class.latest]="i === 0">
+                  v{{ fw.version }}
+                </div>
+                <div class="fw-card-info">
+                  <span class="fw-filename">{{ fw.archivo }}</span>
+                  <span class="fw-meta">{{ fw.tamano_kb }} KB - {{ formatFecha(fw.fecha_subida) }}</span>
+                </div>
+                @if (i === 0) {
+                  <span class="fw-latest-badge">Ultima</span>
+                }
+              </div>
+              @if (fw.descripcion) {
+                <div class="fw-card-desc">{{ fw.descripcion }}</div>
+              }
+              <div class="fw-card-actions">
+                <button class="btn-download-fw" (click)="descargarFirmware(fw)" title="Descargar .bin">
+                  <i class="bi bi-download"></i>
+                </button>
+                <button class="btn-delete-rf" (click)="eliminarFirmware(fw)" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

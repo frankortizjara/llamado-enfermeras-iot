@@ -1,0 +1,490 @@
+<div class="contenido-tv-page">
+  <div class="page-header">
+    <h1><i class="bi bi-tv"></i> Contenido TV</h1>
+    <p class="page-subtitle">Administra efemérides, cumpleaños y avisos que se mostrarán en la pantalla TV</p>
+  </div>
+
+  <mat-tab-group animationDuration="200ms">
+    <!-- ==================== TAB EFEMÉRIDES ==================== -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <i class="bi bi-calendar-heart tab-icon"></i>
+        Efemérides
+      </ng-template>
+
+      <div class="tab-content">
+        @if (esJefeArea) {
+          <div class="tab-actions">
+            <button class="btn-agregar" (click)="agregarEfemeride()">
+              <i class="bi bi-plus-circle"></i> Nueva Efeméride
+            </button>
+          </div>
+        }
+
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Título</th>
+                <th>Tipo</th>
+                <th>Icono</th>
+                @if (esJefeArea) { <th>Acciones</th> }
+              </tr>
+            </thead>
+            <tbody>
+              @for (e of efemerides; track e.id) {
+                <tr>
+                  <td class="td-fecha">{{ e.dia }} {{ getMesNombre(e.mes) }}</td>
+                  <td>
+                    <strong>{{ e.titulo }}</strong>
+                    @if (e.descripcion) {
+                      <br><span class="text-muted">{{ e.descripcion }}</span>
+                    }
+                  </td>
+                  <td>
+                    <span class="badge-tipo" [class.badge-peru]="e.tipo === 'peru'" [class.badge-intl]="e.tipo === 'internacional'">
+                      {{ e.tipo === 'peru' ? 'Perú' : e.tipo === 'internacional' ? 'Internacional' : 'Salud' }}
+                    </span>
+                  </td>
+                  <td class="td-icono">
+                    @if (e.icono) { <i [class]="e.icono"></i> }
+                  </td>
+                  @if (esJefeArea) {
+                    <td class="td-acciones">
+                      <button class="btn-icon btn-edit" (click)="agregarEfemeride(e)" title="Editar">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button class="btn-icon btn-delete" (click)="eliminarEfemeride(e.id)" title="Eliminar">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </td>
+                  }
+                </tr>
+              } @empty {
+                <tr><td [attr.colspan]="esJefeArea ? 5 : 4" class="td-empty">No hay efemérides registradas</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ==================== TAB CUMPLEAÑOS ==================== -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <i class="bi bi-balloon-heart tab-icon"></i>
+        Cumpleaños
+      </ng-template>
+
+      <div class="tab-content">
+        <div class="tab-actions">
+          <button class="btn-agregar" (click)="agregarCumpleano()">
+            <i class="bi bi-plus-circle"></i> Nuevo Cumpleaños
+          </button>
+        </div>
+
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Nombre</th>
+                <th>Cargo</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of cumpleanos; track c.id) {
+                <tr>
+                  <td class="td-fecha">{{ c.dia }} {{ getMesNombre(c.mes) }}</td>
+                  <td><strong>{{ c.nombre }}</strong></td>
+                  <td>{{ c.cargo || '-' }}</td>
+                  <td class="td-acciones">
+                    <button class="btn-icon btn-edit" (click)="agregarCumpleano(c)" title="Editar">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn-icon btn-delete" (click)="eliminarCumpleano(c.id)" title="Eliminar">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4" class="td-empty">No hay cumpleaños registrados</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ==================== TAB AVISOS ==================== -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <i class="bi bi-megaphone tab-icon"></i>
+        Avisos
+      </ng-template>
+
+      <div class="tab-content">
+        @if (esJefeArea) {
+          <div class="tab-actions">
+            <button class="btn-agregar" (click)="agregarAviso()">
+              <i class="bi bi-plus-circle"></i> Nuevo Aviso
+            </button>
+          </div>
+        }
+
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Prioridad</th>
+                <th>Título</th>
+                <th>Mensaje</th>
+                <th>Modo</th>
+                <th>Vigencia</th>
+                @if (esJefeArea) { <th>Acciones</th> }
+              </tr>
+            </thead>
+            <tbody>
+              @for (a of avisos; track a.id) {
+                <tr>
+                  <td>
+                    <span class="badge-prioridad" [style.background]="getPrioridadColor(a.prioridad)">
+                      {{ getPrioridadLabel(a.prioridad) }}
+                    </span>
+                  </td>
+                  <td><strong>{{ a.titulo }}</strong></td>
+                  <td class="td-mensaje">{{ a.mensaje }}</td>
+                  <td>
+                    <span class="badge-modo" [class.badge-permanente]="a.modo_display === 'permanente'">
+                      {{ a.modo_display === 'permanente' ? 'Permanente' : 'Periódico' }}
+                    </span>
+                  </td>
+                  <td class="td-fecha">
+                    {{ a.fecha_inicio || 'Hoy' }}
+                    @if (a.fecha_fin) { <br>hasta {{ a.fecha_fin }} }
+                  </td>
+                  @if (esJefeArea) {
+                    <td class="td-acciones">
+                      <button class="btn-icon btn-edit" (click)="agregarAviso(a)" title="Editar">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button class="btn-icon btn-delete" (click)="eliminarAviso(a.id)" title="Eliminar">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </td>
+                  }
+                </tr>
+              } @empty {
+                <tr><td [attr.colspan]="esJefeArea ? 6 : 5" class="td-empty">No hay avisos activos</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ==================== TAB AUDIO ==================== -->
+    @if (verAudio) {
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <i class="bi bi-volume-up tab-icon"></i>
+          Audio
+        </ng-template>
+
+        <div class="tab-content">
+          <!-- Habilitado / Volumen -->
+          <div class="config-section">
+            <h3>Configuración de Audio</h3>
+            <p class="config-desc">Configura los sonidos de alerta y emergencia que se reproducen en la pantalla TV.</p>
+
+            <div class="audio-toggle-row">
+              <label class="toggle-label">
+                <i class="bi bi-volume-up"></i> Audio habilitado
+              </label>
+              <label class="toggle-switch">
+                <input type="checkbox" [checked]="audioHabilitado" (change)="audioHabilitado = !audioHabilitado">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="config-item audio-volumen-item">
+              <label><i class="bi bi-speaker"></i> Volumen</label>
+              <div class="volumen-row">
+                <input type="range" min="0" max="100" step="5"
+                  [(ngModel)]="configTv.audio_volumen"
+                  (change)="guardarConfig('audio_volumen', configTv.audio_volumen)">
+                <span class="volumen-valor">{{ configTv.audio_volumen }}%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alerta Normal -->
+          <div class="config-section">
+            <h3><i class="bi bi-bell"></i> Alerta Normal</h3>
+
+            <div class="config-grid">
+              <div class="config-item">
+                <label><i class="bi bi-music-note-beamed"></i> Sonido</label>
+                <div class="sonido-select-row">
+                  <select [(ngModel)]="configTv.audio_sonido_alerta"
+                    (change)="guardarConfig('audio_sonido_alerta', configTv.audio_sonido_alerta)">
+                    @for (s of todosLosSonidos; track s) {
+                      <option [value]="s">{{ s }}{{ esPreset(s) ? ' (predeterminado)' : '' }}</option>
+                    }
+                  </select>
+                  <button class="btn-preview" (click)="previewSonido(configTv.audio_sonido_alerta)" title="Escuchar">
+                    <i class="bi bi-play-circle"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="config-item">
+                <label><i class="bi bi-stopwatch"></i> Duración (segundos)</label>
+                <input type="number" [(ngModel)]="configTv.audio_duracion_alerta" min="0" max="300"
+                  (change)="guardarConfig('audio_duracion_alerta', configTv.audio_duracion_alerta)">
+                <span class="config-hint">0 = sonido continuo hasta que se resuelva</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Emergencia -->
+          <div class="config-section">
+            <h3><i class="bi bi-exclamation-triangle"></i> Emergencia</h3>
+
+            <div class="config-grid">
+              <div class="config-item">
+                <label><i class="bi bi-music-note-beamed"></i> Sonido</label>
+                <div class="sonido-select-row">
+                  <select [(ngModel)]="configTv.audio_sonido_emergencia"
+                    (change)="guardarConfig('audio_sonido_emergencia', configTv.audio_sonido_emergencia)">
+                    @for (s of todosLosSonidos; track s) {
+                      <option [value]="s">{{ s }}{{ esPreset(s) ? ' (predeterminado)' : '' }}</option>
+                    }
+                  </select>
+                  <button class="btn-preview" (click)="previewSonido(configTv.audio_sonido_emergencia)" title="Escuchar">
+                    <i class="bi bi-play-circle"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="config-item">
+                <label><i class="bi bi-stopwatch"></i> Duración (segundos)</label>
+                <input type="number" [(ngModel)]="configTv.audio_duracion_emergencia" min="0" max="300"
+                  (change)="guardarConfig('audio_duracion_emergencia', configTv.audio_duracion_emergencia)">
+                <span class="config-hint">0 = sonido continuo hasta que se resuelva</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sonidos Personalizados -->
+          <div class="config-section">
+            <h3><i class="bi bi-folder-plus"></i> Sonidos Personalizados</h3>
+            <p class="config-desc">Sube archivos de audio (.mp3, .wav) para usar como sonidos de alerta. Máximo 2MB por archivo.</p>
+
+            <div class="upload-row">
+              <label class="btn-agregar btn-upload">
+                <i class="bi bi-cloud-arrow-up"></i>
+                {{ subiendoAudio ? 'Subiendo...' : 'Subir sonido' }}
+                <input type="file" accept=".mp3,.wav" (change)="subirSonido($event)" [disabled]="subiendoAudio" hidden>
+              </label>
+            </div>
+
+            @if (sonidosCustom.length > 0) {
+              <div class="sonidos-lista">
+                @for (s of sonidosCustom; track s) {
+                  <div class="sonido-item">
+                    <i class="bi bi-file-earmark-music"></i>
+                    <span class="sonido-nombre">{{ s }}</span>
+                    <button class="btn-icon btn-edit" (click)="previewSonido(s)" title="Escuchar">
+                      <i class="bi bi-play-circle"></i>
+                    </button>
+                    <button class="btn-icon btn-delete" (click)="eliminarSonido(s)" title="Eliminar">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="text-muted-small">No hay sonidos personalizados subidos</p>
+            }
+          </div>
+        </div>
+      </mat-tab>
+    }
+
+    <!-- ==================== TAB CONFIGURACIÓN ==================== -->
+    @if (verConfig) {
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <i class="bi bi-gear tab-icon"></i>
+          Configuración
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="config-section">
+            <h3>Intervalos de visualización en TV</h3>
+            <p class="config-desc">Configura cada cuántos minutos aparecen los diferentes contenidos en la pantalla TV.</p>
+
+            <div class="config-grid">
+              <div class="config-item">
+                <label><i class="bi bi-calendar-heart"></i> Efemérides (minutos)</label>
+                <input type="number" [(ngModel)]="configTv.intervalo_efemerides" min="5" max="120" (change)="guardarConfig('intervalo_efemerides', configTv.intervalo_efemerides)">
+              </div>
+              <div class="config-item">
+                <label><i class="bi bi-balloon-heart"></i> Cumpleaños (minutos)</label>
+                <input type="number" [(ngModel)]="configTv.intervalo_cumpleanos" min="5" max="120" (change)="guardarConfig('intervalo_cumpleanos', configTv.intervalo_cumpleanos)">
+              </div>
+              <div class="config-item">
+                <label><i class="bi bi-megaphone"></i> Avisos periódicos (minutos)</label>
+                <input type="number" [(ngModel)]="configTv.intervalo_avisos" min="5" max="120" (change)="guardarConfig('intervalo_avisos', configTv.intervalo_avisos)">
+              </div>
+              <div class="config-item">
+                <label><i class="bi bi-clock"></i> Duración del overlay (segundos)</label>
+                <input type="number" [(ngModel)]="configTv.duracion_overlay" min="5" max="60" (change)="guardarConfig('duracion_overlay', configTv.duracion_overlay)">
+              </div>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h3>Apariencia de pantalla TV</h3>
+            <p class="config-desc">Ajusta el tamaño de la tipografía en la pantalla TV. Útil para pantallas grandes vistas a distancia.</p>
+
+            <div class="config-grid">
+              <div class="config-item">
+                <label><i class="bi bi-type"></i> Tamaño de fuente TV ({{ configTv.tamano_fuente_tv }}%)</label>
+                <div class="volumen-row">
+                  <input type="range" min="80" max="200" step="10"
+                    [(ngModel)]="configTv.tamano_fuente_tv"
+                    (change)="guardarConfig('tamano_fuente_tv', configTv.tamano_fuente_tv)">
+                  <span class="volumen-valor">{{ configTv.tamano_fuente_tv }}%</span>
+                </div>
+                <span class="config-hint">100% = tamaño normal, 150% = 50% más grande</span>
+              </div>
+            </div>
+          </div>
+
+          @if (esAdmin) {
+            <div class="config-section">
+              <h3>Sincronización con EsSi</h3>
+              <p class="config-desc">
+                Controla cada cuánto se sincronizan los datos de camas/pacientes con la API EsSi
+                y cómo se manejan los cambios manuales que aún no han sido confirmados por la sincronización.
+                <strong>Cambios aplicados aquí toman efecto sin reiniciar el servidor.</strong>
+              </p>
+
+              <div class="config-grid">
+                <div class="config-item">
+                  <label><i class="bi bi-arrow-repeat"></i> Intervalo de sincronización (minutos)</label>
+                  <input type="number"
+                    [min]="configSistemaMap['SYNC_INTERVAL_MINUTES']?.valor_min || 1"
+                    [max]="configSistemaMap['SYNC_INTERVAL_MINUTES']?.valor_max || 1440"
+                    [value]="getValorConfigSistema('SYNC_INTERVAL_MINUTES')"
+                    (change)="guardarConfigSistema('SYNC_INTERVAL_MINUTES', $any($event.target).value)"
+                    [disabled]="guardandoConfigSistema['SYNC_INTERVAL_MINUTES']">
+                  <span class="config-hint">{{ configSistemaMap['SYNC_INTERVAL_MINUTES']?.descripcion }}</span>
+                </div>
+
+                <div class="config-item">
+                  <label><i class="bi bi-clock-history"></i> Ventana de gracia (horas)</label>
+                  <input type="number"
+                    [min]="configSistemaMap['VENTANA_GRACIA_HORAS']?.valor_min || 1"
+                    [max]="configSistemaMap['VENTANA_GRACIA_HORAS']?.valor_max || 72"
+                    [value]="getValorConfigSistema('VENTANA_GRACIA_HORAS')"
+                    (change)="guardarConfigSistema('VENTANA_GRACIA_HORAS', $any($event.target).value)"
+                    [disabled]="guardandoConfigSistema['VENTANA_GRACIA_HORAS']">
+                  <span class="config-hint">{{ configSistemaMap['VENTANA_GRACIA_HORAS']?.descripcion }}</span>
+                </div>
+
+                <div class="config-item">
+                  <label><i class="bi bi-bar-chart-steps"></i> Ventana de gracia (ciclos)</label>
+                  <input type="number"
+                    [min]="configSistemaMap['VENTANA_GRACIA_CICLOS']?.valor_min || 1"
+                    [max]="configSistemaMap['VENTANA_GRACIA_CICLOS']?.valor_max || 100"
+                    [value]="getValorConfigSistema('VENTANA_GRACIA_CICLOS')"
+                    (change)="guardarConfigSistema('VENTANA_GRACIA_CICLOS', $any($event.target).value)"
+                    [disabled]="guardandoConfigSistema['VENTANA_GRACIA_CICLOS']">
+                  <span class="config-hint">{{ configSistemaMap['VENTANA_GRACIA_CICLOS']?.descripcion }}</span>
+                </div>
+
+                <div class="config-item">
+                  <label><i class="bi bi-trash"></i> Tiempo en rojo antes de eliminar (horas)</label>
+                  <input type="number"
+                    [min]="configSistemaMap['TIEMPO_ROJO_HASTA_ELIMINAR_HORAS']?.valor_min || 1"
+                    [max]="configSistemaMap['TIEMPO_ROJO_HASTA_ELIMINAR_HORAS']?.valor_max || 72"
+                    [value]="getValorConfigSistema('TIEMPO_ROJO_HASTA_ELIMINAR_HORAS')"
+                    (change)="guardarConfigSistema('TIEMPO_ROJO_HASTA_ELIMINAR_HORAS', $any($event.target).value)"
+                    [disabled]="guardandoConfigSistema['TIEMPO_ROJO_HASTA_ELIMINAR_HORAS']">
+                  <span class="config-hint">{{ configSistemaMap['TIEMPO_ROJO_HASTA_ELIMINAR_HORAS']?.descripcion }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </mat-tab>
+    }
+    <!-- ==================== TAB PANTALLAS TV ==================== -->
+    @if (esAdmin) {
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <i class="bi bi-display tab-icon"></i>
+          Pantallas TV
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="tab-actions">
+            <button class="btn-agregar" (click)="agregarPantallaTv()">
+              <i class="bi bi-plus-circle"></i> Nueva Pantalla
+            </button>
+          </div>
+
+          <p class="config-desc">
+            Crea enlaces públicos para pantallas TV. Cada enlace muestra las camas de un área específica sin necesidad de iniciar sesión.
+          </p>
+
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Área</th>
+                  <th>Enlace</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (p of pantallasTv; track p.id) {
+                  <tr>
+                    <td><strong>{{ p.nombre }}</strong></td>
+                    <td>{{ p.area_nombre || '-' }}</td>
+                    <td class="td-enlace">
+                      <code class="enlace-code">/tv/{{ p.token }}</code>
+                      <button class="btn-icon btn-copy-small" (click)="copiarEnlace(p.token)" title="Copiar enlace completo">
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </td>
+                    <td>
+                      <span class="badge-estado" [class.badge-activo]="p.estado" [class.badge-inactivo]="!p.estado">
+                        {{ p.estado ? 'Activa' : 'Desactivada' }}
+                      </span>
+                    </td>
+                    <td class="td-acciones">
+                      <button class="btn-icon btn-edit" (click)="agregarPantallaTv(p)" title="Editar">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button class="btn-icon btn-delete" (click)="eliminarPantallaTv(p.id!)" title="Eliminar">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr><td colspan="5" class="td-empty">No hay pantallas TV configuradas</td></tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </mat-tab>
+    }
+  </mat-tab-group>
+</div>

@@ -1,0 +1,352 @@
+/* Add Nota Component */
+
+.nueva_nota {
+  width: 100%;
+  max-width: 520px;
+  padding: 20px;
+  border-radius: 5px;
+
+  @media (max-width: 767px) {
+    padding: 15px;
+  }
+}
+
+.title_close {
+  width: 100%;
+  padding: 5px 0;
+}
+
+.title_close span {
+  font-family: Roboto, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+  color: #0D6EFD;
+
+  @media (max-width: 767px) {
+    font-size: 16px;
+  }
+}
+
+.vector_2 {
+  height: 0;
+  border: 2px solid #0D6EFD;
+  margin-bottom: 5px;
+}
+
+.content {
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 15px 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cama_input {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  label {
+    font-family: Roboto, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.select_cama {
+  width: 100%;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid #DCDCE4;
+  padding: 6px 10px;
+  font-size: 14px;
+  background: #FFFFFF;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: #0D6EFD;
+    box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15);
+  }
+}
+
+.text_select {
+  font-family: Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 20px;
+  background: #8E8EA9;
+}
+
+/* Beds List */
+.beds-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bed-card {
+  background: #F8F9FA;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bed-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bed-letter {
+  background: #0D6EFD;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 700;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bed-patient {
+  font-family: Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1916AC;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Note Chips */
+.note-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  border: 1.5px solid #DDD;
+  background: #F5F5F5;
+  font-size: 11px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1;
+
+  i {
+    font-size: 11px;
+  }
+
+  &:hover {
+    border-color: var(--chip-color, #999);
+    color: var(--chip-color, #555);
+    background: #FFF;
+  }
+
+  &.chip-active {
+    background: var(--chip-color, #0D6EFD) !important;
+    border-color: var(--chip-color, #0D6EFD) !important;
+    color: #FFFFFF !important;
+
+    i {
+      color: #FFFFFF !important;
+    }
+  }
+}
+
+/* Note Inputs */
+.note-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+
+  label {
+    font-family: Roboto, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: #888;
+  }
+
+  &:first-child {
+    flex: 2;
+    min-width: 80px;
+  }
+}
+
+.input-group-action {
+  flex: 0 0 auto;
+}
+
+.nota-field {
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  box-sizing: border-box;
+  border: 1px solid #DCDCE4;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #FFFFFF;
+
+  &:focus {
+    outline: none;
+    border-color: #0D6EFD;
+    box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15);
+  }
+
+  &::placeholder {
+    text-transform: none;
+    font-weight: 400;
+    color: #AAA;
+  }
+}
+
+.hora-field {
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  box-sizing: border-box;
+  border: 1px solid #DCDCE4;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 13px;
+  background: #FFFFFF;
+
+  &:focus {
+    outline: none;
+    border-color: #0D6EFD;
+    box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15);
+  }
+}
+
+.btn-clear {
+  height: 32px;
+  width: 32px;
+  border: 1px solid #EF3038;
+  border-radius: 4px;
+  background: #FFF;
+  color: #EF3038;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #EF3038;
+    color: #FFFFFF;
+  }
+
+  i {
+    font-size: 14px;
+  }
+}
+
+/* Line separator */
+.line4 {
+  width: 100%;
+  height: 0;
+  border: 1px solid #DCDCE4;
+  margin: 5px 0;
+}
+
+/* Buttons */
+.btn_group {
+  width: 100%;
+  padding: 12px 0 0;
+  gap: 12px;
+  display: flex;
+  justify-content: flex-end;
+
+  @media (max-width: 479px) {
+    justify-content: center;
+  }
+}
+
+.primary {
+  height: 36px;
+  padding: 8px 20px;
+  border-radius: 4px;
+  background: #F0F0FF;
+  border: 1px solid #D9D8FF;
+  font-family: Calibri, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1957FF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #E0E0FF;
+  }
+}
+
+.secundary {
+  font-family: Calibri, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.secundary button {
+  width: 100%;
+  height: 36px;
+  padding: 8px 20px;
+  border-radius: 4px;
+  background: #1957FF;
+  border: 1px solid #1957FF;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #1445CC;
+  }
+
+  &:disabled {
+    background: #5B87FF;
+    border: 1px solid #5B87FF;
+    cursor: not-allowed;
+  }
+}
+
+/* Dialog responsive override */
+:host ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+  width: 90vw;
+  max-width: 520px;
+
+  @media (min-width: 768px) {
+    width: 520px;
+  }
+}

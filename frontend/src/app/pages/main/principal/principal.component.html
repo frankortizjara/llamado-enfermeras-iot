@@ -1,0 +1,167 @@
+<div class="principal">
+  <!-- Loading State -->
+  @if (loading) {
+    <app-loading message="Cargando habitaciones..." [fullScreen]="true" />
+  }
+
+  <!-- Error State -->
+  @if (error && !loading) {
+    <app-error-message [message]="error" (retry)="cargarDatos()" />
+  }
+
+  <!-- Content -->
+  @if (!loading && !error) {
+    <div class="body-h">
+      <!-- Banner de avisos permanentes (segunda cabecera) -->
+      <app-tv-overlay [contenido]="contenidoOverlay" [avisosPermanentes]="avisosPermanentes" [duracionOverlay]="duracionOverlay" />
+
+      <div class="titulo-h">
+        <div class="titulo-h-left">
+          <span>Habitaciones</span>
+          @if (ultimaSincronizacion) {
+            <span class="sync-info">Datos sincronizados: {{ ultimaSincronizacion }}</span>
+          }
+        </div>
+        <div class="btn-edit" (click)="addNota()">
+          <i class="bi bi-chat-square-text-fill" style="color: white;"></i>
+          <p class="btn-text">Agregar Notas</p>
+        </div>
+      </div>
+
+      <div class="contenedor-h">
+        @for (habitacion of lstHabitaciones; track habitacion.nombre) {
+          <div
+            class="habitacion"
+            [class.habitacion-alerta]="tieneAlertaSimple(habitacion.nombre) && !esSoloAlertaBano(habitacion.nombre)"
+            [class.habitacion-alerta-bano]="tieneAlertaSimple(habitacion.nombre) && esSoloAlertaBano(habitacion.nombre)"
+          >
+            <div
+              class="numero-h"
+              [class.numero-alerta]="tieneAlertaSimple(habitacion.nombre) && !esSoloAlertaBano(habitacion.nombre)"
+              [class.numero-alerta-bano]="tieneAlertaSimple(habitacion.nombre) && esSoloAlertaBano(habitacion.nombre)"
+            >
+              <p>{{ habitacion.nombre }}</p>
+            </div>
+
+            <div class="contender-c">
+              @for (cama of habitacion.camas; track cama.id) {
+                <div
+                  class="cama"
+                  [class.cama-alerta]="camaEnAlerta(habitacion.nombre, cama.nombre)"
+                  [class.cama-bano]="cama.paciente === 'Baño' && camaEnAlerta(habitacion.nombre, cama.nombre)"
+                  [class.cama-manual-pendiente]="esCamaManualPendiente(cama)"
+                  [class.cama-ingreso-manual]="esCamaIngresoManualPendiente(cama)"
+                  [class.cama-expirada-roja]="esCamaExpiradaRoja(cama)"
+                  (click)="addNotaPaciente(habitacion, cama)"
+                >
+                  <p class="letra-c" [class.letra-alerta]="camaEnAlerta(habitacion.nombre, cama.nombre)">
+                    {{ cama.nombre }}
+                  </p>
+                  @if (cama.nombre && cama.nombre.length > 0) {
+                    <div class="line-v" [class.line-alerta]="camaEnAlerta(habitacion.nombre, cama.nombre)"></div>
+                  }
+                  <div class="paciente-info">
+                    <p class="nombre-p" [class.nombre-alerta]="camaEnAlerta(habitacion.nombre, cama.nombre)">
+                      {{ getNombreApellido(cama.paciente || '') }}
+                    </p>
+                    @if (cama.nroDocIdePac && cama.paciente && cama.paciente !== 'Baño') {
+                      <p class="dni-p">DNI: {{ cama.nroDocIdePac }}</p>
+                    }
+
+                    @if (cama.nota) {
+                      <div class="nota-badge" [style.background]="getNotaColor(cama.nota)">
+                        <i [class]="getNotaIcon(cama.nota)"></i>
+                        <span class="nota-text">{{ cama.nota }}</span>
+                        @if (cama.fecha_nota) {
+                          <span class="nota-time">{{ formatNotaHora(cama.fecha_nota) }}</span>
+                          <span class="nota-date">{{ formatNotaFecha(cama.fecha_nota) }}</span>
+                        }
+                      </div>
+                    }
+                  </div>
+
+                  <img
+                    class="icon-c"
+                    [src]="camaEnAlerta(habitacion.nombre, cama.nombre)
+                      ? (cama.paciente === 'Baño' ? 'assets/icons/icono-baño.svg' : 'assets/icons/icono-alarma.svg')
+                      : 'assets/icons/icono-cama.svg'"
+                    alt="icono-cama"
+                  />
+
+                  @if (puedeGestionarCamas && cama.paciente && cama.paciente.trim() && cama.paciente !== 'Baño') {
+                    <button class="btn-mover-cama" title="Mover paciente de cama"
+                            (click)="abrirDialogoCambiarCama(habitacion, cama, $event)">
+                      <i class="bi bi-arrow-left-right"></i>
+                    </button>
+                  }
+
+                  @if (puedeGestionarCamas && esCamaLibre(cama) && cama.nombre && cama.nombre !== '-') {
+                    <button class="btn-ingresar-paciente" title="Ingresar paciente manualmente"
+                            (click)="abrirDialogoIngresarPaciente(habitacion, cama, $event)">
+                      <i class="bi bi-person-plus"></i>
+                    </button>
+                  }
+
+                  @if (esCamaManualPendiente(cama)) {
+                    <button class="btn-cancelar-manual" title="Cancelar cambio manual (volver a EsSi)"
+                            (click)="cancelarCambioManual(cama, $event)">
+                      <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                    <span class="badge-manual" title="Cambio manual sin confirmar por EsSi">Manual</span>
+                  }
+
+                  @if (esCamaExpiradaRoja(cama)) {
+                    <span class="badge-expirado" title="Vencida sin confirmación EsSi — se eliminará automáticamente">Expirado</span>
+                  }
+                </div>
+              }
+
+              <!-- Indicador de alerta de baño -->
+              @if (tieneAlertaBano(habitacion.nombre)) {
+                <div class="bano-alerta-indicator">
+                  <img src="assets/icons/icono-baño.svg" alt="baño" class="bano-alerta-icon" />
+                  <span>Baño</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ALERTA CRÍTICA - EMERGENCIA (estado == 2) - Popup Overlay -->
+    @for (alerta of lstAlerta; track alerta.nombre) {
+      @if (alerta.estado == 2) {
+        <div class="emergencia-overlay" [class.emergencia-overlay-bano]="esEmergenciaBano(alerta)">
+          <div class="emergencia-popup">
+            <div class="emergencia-titulo" [class.emergencia-titulo-bano]="esEmergenciaBano(alerta)">
+              EMERGENCIA
+            </div>
+            <div class="emergencia-cuarto">
+              <span class="emergencia-label">HABITACIÓN</span>
+              <span class="emergencia-numero">{{ alerta.nombre }}</span>
+            </div>
+            <div class="emergencia-pacientes">
+              @for (cama of alerta.camas; track cama.id) {
+                <div class="emergencia-cama" [class.emergencia-cama-bano]="cama.paciente === 'Baño'">
+                  @if (cama.paciente === 'Baño') {
+                    <img src="assets/icons/icono-baño.svg" alt="baño" class="emergencia-bano-icon" />
+                    <span class="emergencia-cama-paciente">Baño</span>
+                  } @else {
+                    <span class="emergencia-cama-letra">{{ cama.nombre }}</span>
+                    <span class="emergencia-cama-paciente">{{ getPacienteDeAlerta(alerta.nombre, cama.nombre) }}</span>
+                  }
+                </div>
+              }
+            </div>
+            @if (esJefeArea) {
+              <button class="btn-reconocer" (click)="reconocerAlerta(alerta.nombre)">
+                <i class="bi bi-check-circle-fill"></i> Reconocer Alerta
+              </button>
+            }
+          </div>
+        </div>
+      }
+    }
+  }
+</div>
