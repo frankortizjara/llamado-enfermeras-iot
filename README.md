@@ -37,7 +37,13 @@ pasillo ya se encendió igual.
                             + relay
 ```
 
-![Indicadores luminosos sobre las puertas de habitación, encendidos en rojo durante una llamada activa](imagenes/02-indicadores-llamada-pasillo.jpg)
+![Indicadores montados sobre las puertas de habitación en un pasillo de hospitalización, uno de ellos con el led de estado encendido](imagenes/02-dispositivos-instalados-pasillo.jpg)
+
+*Los indicadores, instalados sobre cada puerta.*
+
+![Indicadores luminosos sobre las puertas de habitación, encendidos en rojo durante una llamada activa](imagenes/03-indicadores-llamada-encendidos.jpg)
+
+*El mismo pasillo con una llamada activa.*
 
 ---
 
